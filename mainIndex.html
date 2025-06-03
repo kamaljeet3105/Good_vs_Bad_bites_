@@ -1,0 +1,599 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Food Battle</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&family=Comic+Neue:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&display=swap" rel="stylesheet">
+    <style>
+       /* Cosmic Background */
+body {
+  margin: 0;
+  overflow-x: hidden;
+  background: 
+    radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%),
+    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="1" fill="white" opacity="0.5"/></svg>');
+  animation: starsTwinkle 10s infinite alternate;
+  min-height: 100vh;
+  font-family: 'Poppins', sans-serif;
+}
+
+@keyframes starsTwinkle {
+  0% { background-position: 0 0; }
+  100% { background-position: 100px 100px; }
+}
+/* Floating Food Particles */
+.food-particle {
+  position: absolute;
+  font-size: 1.2rem;
+  opacity: 0;
+  animation: floatParticle 15s linear infinite;
+}
+
+@keyframes floatParticle {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.7;
+  }
+  90% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(-100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+/* 3D Container */
+.battle-arena {
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+.logo-container {
+  transform: rotateX(10deg);
+  transition: transform 0.5s ease;
+}
+
+.logo-container:hover {
+  transform: rotateX(10deg) scale(1.05);
+}
+/* Enhanced Food Animations */
+.food-icon {
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+.logo-good .food-icon {
+  animation: 
+    floatUp 4s infinite ease-in-out,
+    goodSpin 8s infinite linear;
+}
+
+.logo-bad .food-icon {
+  animation: 
+    shake 2s infinite ease-in-out,
+    badTilt 5s infinite ease-in-out;
+}
+
+@keyframes goodSpin {
+  0% { transform: rotateY(0deg); }
+  100% { transform: rotateY(360deg); }
+}
+
+@keyframes badTilt {
+  0%, 100% { transform: rotateZ(-5deg); }
+  50% { transform: rotateZ(5deg); }
+}
+/* Battle Connection */
+.battle-connection {
+  position: absolute;
+  height: 4px;
+  background: linear-gradient(90deg, #4CAF50, #6A11CB, #FF5252);
+  width: 0;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  animation: 
+    connectionGrow 1s forwards 0.5s,
+    connectionPulse 2s infinite 1.5s;
+  box-shadow: 0 0 10px rgba(106, 17, 203, 0.7);
+}
+
+@keyframes connectionGrow {
+  to { width: 100%; }
+}
+
+@keyframes connectionPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+/* Interactive Food Elements */
+.food-icon {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.food-icon:hover {
+  transform: scale(1.2);
+  filter: drop-shadow(0 0 10px currentColor);
+}
+
+.logo-good:hover .food-icon {
+  animation: 
+    floatUp 2s infinite ease-in-out,
+    goodSpin 4s infinite linear;
+}
+
+.logo-bad:hover .food-icon {
+  animation: 
+    shake 1s infinite ease-in-out,
+    badTilt 3s infinite ease-in-out;
+}
+/* Animated Background Elements */
+.health-bar {
+  position: absolute;
+  top: 0;
+  height: 5px;
+  animation: healthFluctuate 10s infinite;
+}
+
+.good-health {
+  left: 0;
+  background: linear-gradient(90deg, #4CAF50, #8BC34A);
+  animation-name: goodHealth;
+}
+
+.bad-health {
+  right: 0;
+  background: linear-gradient(90deg, #FF5252, #FF4081);
+  animation-name: badHealth;
+}
+
+@keyframes goodHealth {
+  0%, 100% { width: 60%; }
+  50% { width: 55%; }
+}
+
+@keyframes badHealth {
+  0%, 100% { width: 40%; }
+  50% { width: 45%; }
+}
+body {
+            margin: 0;
+            font-family: 'Comic Neue', cursive;
+            background: linear-gradient(to bottom right, #c5f5c3, #f6d7d7); 
+        }
+        nav {
+            background: linear-gradient(to right, #8fdb8b, #52b56a); /* Green garden shades */
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 5px solid #ff4444; 
+            border-bottom: 5px solid #ff4444; /* fun red border for contrast */
+            box-shadow: 0 4px 8px rgba(28, 29, 28, 0.2);
+            padding: 5px 5px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        nav img {
+            height: 60px;
+            border-radius: 50%;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 23px;
+            transition: all 0.3s;
+            
+        }
+        nav a:hover {
+            color:#ff4444;
+            transform: scale(1.2);
+        }
+    
+
+        .hero {
+            text-align: center;
+            padding: 10px 10px;
+            background: url('kids-bg.png') no-repeat center bottom / cover;
+            color: #ff4444;
+        }
+        .hero h1 {
+            font-size: 3.5em;
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 200%, 50%, 80%, 100% { transform: translateY(0);}
+            40% { transform: translateY(-30px);}
+            60% { transform: translateY(-15px);}
+        }
+        .hero p {
+            font-size: 1.5em;
+            color: #04be33;
+        }
+        .hero p:hover{
+            font-size: 2em;
+            color: #0f441c;
+        }
+        .sections {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 50px 0;
+            gap: 25px;
+        }
+        .card {
+            width: 300px;
+            height: 300px;
+            background: #f1bbbb;
+            border-radius: 30px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        .card:hover {
+            transform: scale(1.05);
+        }
+        .card img {
+            border-radius: 30px;
+            width: 80%;
+            height: 40%;
+            margin: 5px 0px;
+        }
+        .card h3 {
+            color: #04be33;
+        }
+        .card p {
+            color: #474444;
+        }
+        .card a {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 16px;
+            background: #4CAF50;
+            color: white;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+        .card a:hover {
+            background: white;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            color: #439d48;
+
+        }
+        footer {
+            background: linear-gradient(to right, #8fdb8b, #52b56a); /* Green garden shades */
+            border-top: 5px solid #ff4444; 
+            border-bottom: 5px solid #ff4444; /* fun red border for contrast */
+            text-align: center;
+            color: white;
+            padding: 10px;
+            font-family: 23px;
+        }
+        .logo {
+      display: flex;
+      width: 120px;
+      height: 90px;
+      border-radius: 0px;
+      overflow: hidden;
+      box-shadow: 2px 2px 15px rgb(249, 247, 247);
+      cursor: pointer;
+    }
+    .logo:hover{
+        box-shadow: 2px 2px 15px rgb(0, 0, 0);
+    }
+    .good-side, .bad-side {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      transition: transform 0.3s;
+    }
+    .good-side {
+      background: linear-gradient(135deg, #8fdb8b, #52b56a);
+      color: white;
+    }
+    .bad-side {
+      background: linear-gradient(135deg, #f77b7b, #d94545);
+      color: white;
+    }
+    .logo:hover .good-side {
+      transform: scale(1.1) rotate(-5deg);
+    }
+    .logo:hover .bad-side {
+      transform: scale(1.1) rotate(5deg);
+    }
+    .label {
+      font-size: 12px;
+      margin-top: 17px;
+      font-weight: bold;
+    }
+        /* extra */
+        .food-animation {
+            width: 300px;
+            height: 300px;
+            margin: 2rem auto;
+            position: relative;
+            perspective: 1000px;
+        }
+        .hero1 {
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+        }
+    .food-card {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 1s;
+            cursor: pointer;
+        }
+
+        .food-card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .food-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            padding: 2rem;
+        }
+
+        .food-front {
+            background: linear-gradient(135deg, var(--good-color), #8BC34A);
+            transform: rotateY(0deg);
+        }
+
+        .food-back {
+            background: linear-gradient(135deg, var(--bad-color), #FF8A65);
+            transform: rotateY(180deg);
+        }
+
+        .food-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.2));
+        }
+
+        .food-label {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--text-light);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        :root {
+            --good-color: #4CAF50; /* Green for healthy */
+            --bad-color: #FF5252;  /* Red for unhealthy */
+            --primary: #6A11CB;    /* Purple (Duolingo style) */
+            --accent: #FFD700;     /* Gold for rewards */
+            --text-light: #FFFFFF;
+            --text-dark: #333333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', cursive;
+        }
+
+    </style>
+</head>
+<body>
+   
+<nav>
+    <div class="logo">
+        <div class="good-side">
+          <div>🥦🍎</div>
+          <div class="label">Good Food</div>
+        </div>
+        <div class="bad-side">
+          <div>🍩🍔</div>
+          <div class="label">Bad Food</div>
+        </div>
+      </div>
+    <div style="display: flex; gap: 50px;">
+        <a href="mainIndex.html">🏠 Home</a>
+        <a href="index.html">📚 Learn</a>
+        <a href="game.html">🎮 Play Game</a>
+        <a href="monkey-teach.html">▶️ Video</a>
+        <a href="about.html">ℹ️ About Us</a>
+    </div>
+</nav>
+
+<section class="hero">
+            <!-- <div class="logo-bad">
+              <i class="fas fa-hamburger food-icon" style="color: #FF5252;"></i>
+              <i class="fas fa-cookie food-icon" style="color: #795548;"></i>
+              <i class="fas fa-ice-cream food-icon" style="color: #FF4081;"></i>
+            </div> -->
+            <section class="hero1">
+                <h1>Discover Healthy Eating!</h1>
+                <p>Learn the difference between good and bad foods</p>
+                
+                <!-- Food Classification Animation -->
+                <div class="food-animation">
+                    <div class="food-card" id="foodCard">
+                        <div class="food-face food-front">
+                            <span class="food-icon">🍎</span>
+                            <span class="food-label">Healthy!</span>
+                        </div>
+                        <div class="food-face food-back">
+                            <span class="food-icon">🍔</span>
+                            <span class="food-label">Unhealthy!</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <button id="flipButton" style="
+                    background: var(--primary);
+                    color: white;
+                    border: none;
+                    padding: 0.8rem 2rem;
+                    border-radius: 30px;
+                    font-size: 1.2rem;
+                    cursor: pointer;
+                    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+                    transition: all 0.3s;
+                    margin-top: 1rem;
+                ">Flip Food</button>
+            </section>
+            
+     
+    <!-- <video controls autoplay style="width:50%; border-radius:10px; margin-top:-20px;">
+        <source src="video.mp4" type="video/mp4" controls  poster="poster.png">
+        Your browser does not support the video tag.
+    </video> -->
+</section>
+
+<section class="sections">
+    <div class="card">
+        <img src="h5.jpg" alt="Good Foods">
+        <h3>Good Foods 🍎</h3>
+        <p>These foods keep you healthy, strong, and happy! Learn all about them.</p>
+        <a href="index.html">Explore Good Foods</a>
+    </div>
+    <div class="card">
+        <img src="uh1.jpg" alt="Bad Foods">
+        <h3>Bad Foods 🍔</h3>
+        <p>These foods can harm your health! Click here to learn what to avoid.</p>
+        <a href="index.html">Know the Bad Foods</a>
+    </div>
+    <div class="card">
+        <img src="game.jpg" alt="Play Game">
+        <h3>Play Game 🎮</h3>
+        <p>Catch healthy foods and avoid junk! Start having fun with our interactive game.</p>
+        <a href="game.html">Play Now!</a>
+    </div>
+    <div class="card">
+        <img src="v1.jpg" alt="Watch Cartoon Video">
+        <h3>Watch Cartoon 🎥📚</h3>
+        <p>Learn the difference between good and bad foods with a fun cartoon video for kids!</p>
+        <a href="monkey-teach.html">Watch Now!</a>
+    </div>
+    
+</section>
+
+<footer>
+    <p>Made with ❤️ for kids' healthy learning </p>
+</footer>
+<script>
+      // Food Card Flip Animation
+      const foodCard = document.getElementById('foodCard');
+        const flipButton = document.getElementById('flipButton');
+        
+        let isFlipped = false;
+        
+        flipButton.addEventListener('click', () => {
+            isFlipped = !isFlipped;
+            foodCard.classList.toggle('flipped', isFlipped);
+            flipButton.textContent = isFlipped ? 'Show Healthy Food' : 'Show Unhealthy Food';
+        });
+        
+        // Auto-flip every 3 seconds
+        setInterval(() => {
+            isFlipped = !isFlipped;
+            foodCard.classList.toggle('flipped', isFlipped);
+            flipButton.textContent = isFlipped ? 'Show Healthy Food' : 'Show Unhealthy Food';
+        }, 3000);
+        
+        // Animate content boxes on scroll
+        const contentBoxes = document.querySelectorAll('.content-box');
+        
+        function checkBoxes() {
+            const triggerBottom = window.innerHeight / 5 * 4;
+            
+            contentBoxes.forEach(box => {
+                const boxTop = box.getBoundingClientRect().top;
+                
+                if(boxTop < triggerBottom) {
+                    box.classList.add('visible');
+                } else {
+                    box.classList.remove('visible');
+                }
+            });
+        }
+        
+        window.addEventListener('scroll', checkBoxes);
+        checkBoxes(); // Initialize
+        // Smooth page transitions
+document.querySelectorAll('nav a').forEach(link => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    
+    // Animation out
+    document.body.classList.add('fade-out');
+    
+    setTimeout(() => {
+      window.location.href = link.href;
+    }, 500);
+  });
+});
+
+// On page load
+document.addEventListener('DOMContentLoaded', () => {
+  document.body.classList.add('fade-in');
+  
+  // Remove animation class after completion
+  setTimeout(() => {
+    document.body.classList.remove('fade-in');
+  }, 1000);
+});
+    // Create floating food particles
+    document.addEventListener('DOMContentLoaded', () => {
+      const foods = ['🍎', '🥕', '🥦', '🍔', '🍩', '🍕', '🥗', '🌮'];
+      const colors = ['#4CAF50', '#8BC34A', '#FF9800', '#FF5252', '#795548', '#FF4081'];
+      
+      for (let i = 0; i < 30; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'food-particle';
+        particle.textContent = foods[Math.floor(Math.random() * foods.length)];
+        particle.style.left = `${Math.random() * 100}vw`;
+        particle.style.top = `${Math.random() * 100}vh`;
+        particle.style.color = colors[Math.floor(Math.random() * colors.length)];
+        particle.style.animationDelay = `${Math.random() * 15}s`;
+        particle.style.animationDuration = `${10 + Math.random() * 20}s`;
+        document.body.appendChild(particle);
+      }
+      
+      // Interactive animation boost on click
+      document.querySelectorAll('.food-icon').forEach(icon => {
+        icon.addEventListener('click', function() {
+          this.style.animation = 'none';
+          void this.offsetWidth; // Trigger reflow
+          this.style.animation = this.classList.contains('logo-good') ? 
+            'iconPowerUp 0.5s ease-out, floatUp 2s infinite ease-in-out, goodSpin 4s infinite linear' : 
+            'iconPowerUp 0.5s ease-out, shake 1s infinite ease-in-out, badTilt 3s infinite ease-in-out';
+        });
+      });
+    });
+  </script>
+</body>
+</html>
+

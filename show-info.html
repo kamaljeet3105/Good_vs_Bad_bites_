@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Info - Fun Learning for Kids!</title>
+    <style>
+        body {
+            
+            text-align: center;
+            overflow-x: hidden;
+            margin: 0;
+            font-family: 'Comic Neue', cursive;
+            background: linear-gradient(to bottom right, #c5f5c3, #f6d7d7); 
+        }
+
+        h1 {
+            font-size: 3em;
+            color: #ff4d4d;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .info-box {
+            padding: 30px;
+            border: 5px dotted #ff6600;
+            background: linear-gradient(135deg, #ffecd2, #fcb69f);
+            border-radius: 25px;
+            display: inline-block;
+            margin-top: 50px;
+            position: relative;
+            animation: slideIn 1.5s ease;
+            box-shadow: 0 0 20px rgba(255, 153, 0, 0.5);
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        h2 {
+            color: #ff6600;
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+
+        p {
+            font-size: 1.4em;
+            color: #444;
+        }
+
+        button {
+            margin-top: 40px;
+            padding: 15px 30px;
+            font-size: 1.5em;
+            border-radius: 15px;
+            border: none;
+            background-color: #ff6600;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #ff944d;
+            transform: scale(1.1);
+        }
+
+        /* Sparkles animation */
+        .sparkle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: yellow;
+            border-radius: 50%;
+            opacity: 0;
+            animation: sparkle 2s infinite;
+        }
+
+        @keyframes sparkle {
+            0% { transform: translate(0,0) scale(0); opacity: 1; }
+            50% { opacity: 1; transform: translate(50px, -50px) scale(1.5); }
+            100% { opacity: 0; transform: translate(100px, 0) scale(0); }
+        }
+        .logo {
+      display: flex;
+      width: 120px;
+      height: 90px;
+      border-radius: 0px;
+      overflow: hidden;
+      box-shadow: 2px 2px 15px rgb(249, 247, 247);
+      cursor: pointer;
+    }
+    .logo:hover{
+        box-shadow: 2px 2px 15px rgb(0, 0, 0);
+    }
+    .good-side, .bad-side {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      transition: transform 0.3s;
+    }
+    .good-side {
+      background: linear-gradient(135deg, #8fdb8b, #52b56a);
+      color: white;
+    }
+    .bad-side {
+      background: linear-gradient(135deg, #f77b7b, #d94545);
+      color: white;
+    }
+    .logo:hover .good-side {
+      transform: scale(1.1) rotate(-5deg);
+    }
+    .logo:hover .bad-side {
+      transform: scale(1.1) rotate(5deg);
+    }
+    .label {
+      font-size: 12px;
+      margin-top: 17px;
+      font-weight: bold;
+    }
+    footer {
+            background: linear-gradient(to right, #8fdb8b, #52b56a); /* Green garden shades */
+            border-top: 5px solid #ff4444; 
+            border-bottom: 5px solid #ff4444; /* fun red border for contrast */
+            text-align: center;
+            color: white;
+            padding: 10px;
+            font-family: 23px;
+        }
+        nav {
+            background: linear-gradient(to right, #8fdb8b, #52b56a); /* Green garden shades */
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 5px solid #ff4444; 
+            border-bottom: 5px solid #ff4444; /* fun red border for contrast */
+            box-shadow: 0 4px 8px rgba(28, 29, 28, 0.2);
+            padding: 5px 5px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        nav img {
+            height: 60px;
+            border-radius: 50%;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 23px;
+            transition: all 0.3s;
+            
+        }
+        nav a:hover {
+            color:#ff4444;
+            transform: scale(1.2);
+        }
+    </style>
+</head>
+<body>
+    
+<nav>
+    <div class="logo">
+        <div class="good-side">
+          <div>🥦🍎</div>
+          <div class="label">Good Food</div>
+        </div>
+        <div class="bad-side">
+          <div>🍩🍔</div>
+          <div class="label">Bad Food</div>
+        </div>
+      </div>
+    <div style="display: flex; gap: 50px;">
+        <a href="mainIndex.html">🏠 Home</a>
+        <a href="index.html">📚 Learn</a>
+        <a href="game.html">🎮 Play Game</a>
+        <a href="monkey-teach.html">▶️ Video</a>
+        <a href="about.html">ℹ️ About Us</a>
+    </div>
+</nav>
+    <h1>🎉 Food Information Page 🎉</h1>
+    <div class="info-box" id="food-info">
+        Loading food information... 🍎🍕
+    </div>
+    <br>
+    <button onclick="goBack()">⬅️ Go Back</button>
+
+    <script>
+        function getFoodInfo(food) {
+            const foodDetails = {
+                apple: "🍎 Apples are super healthy and full of vitamins! Crunch them daily!",
+                banana: "🍌 Bananas give you energy and are perfect for snacks!",
+                carrot: "🥕 Carrots make your eyes strong like a superhero!",
+                milk: "🥛 Milk builds strong bones and teeth! Yummy and healthy!",
+                rice: "🍚 Rice keeps you active and energetic!",
+                burger: "🍔 Burgers are tasty treats but eat them rarely, too oily!",
+                pizza: "🍕 Pizza is fun but full of cheese! Sometimes okay, not daily!",
+                candy: "🍬 Too much candy hurts your teeth! Just a little is okay!",
+                soda: "🥤 Soda has lots of sugar and makes you sleepy! Water is better!",
+                chips: "🍟 Chips are salty snacks. Only sometimes for fun!"
+            };
+            return foodDetails[food] || "Oops! I don't have info for this food yet.";
+        }
+
+        function goBack() {
+            window.location.href = "index.html";
+        }
+
+        const params = new URLSearchParams(window.location.search);
+        const foodClicked = params.get('food');
+
+        document.getElementById('food-info').innerHTML = `
+            <h2>${foodClicked?.toUpperCase()} 🎊</h2>
+            <p>${getFoodInfo(foodClicked)}</p>
+        `;
+
+        // Add sparkles for fun!
+        for (let i = 0; i < 20; i++) {
+            const sparkle = document.createElement('div');
+            sparkle.classList.add('sparkle');
+            sparkle.style.top = Math.random() * 100 + '%';
+            sparkle.style.left = Math.random() * 100 + '%';
+            sparkle.style.animationDelay = `${Math.random() * 3}s`;
+            document.getElementById('food-info').appendChild(sparkle);
+        }
+    </script>
+    <footer>
+        <p>Made with ❤️ for kids' healthy learning </p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Catch Adventure</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Comic Sans MS', cursive;
+            background: linear-gradient(to bottom, #87CEEB, #E0F7FA);
+            touch-action: manipulation;
+        }
+        
+        #game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        
+        #basket {
+            position: absolute;
+            width: 100px;
+            height: 60px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 60"><path d="M10,10 L90,10 L80,50 L20,50 Z" fill="%23A67C52" stroke="%235D4037" stroke-width="3"/><path d="M20,15 L80,15 L75,45 L25,45 Z" fill="%238D6E63" stroke="%235D4037" stroke-width="2"/></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            cursor: pointer;
+        }
+        
+        .food {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            transition: transform 0.1s;
+        }
+        
+        #score-display {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 24px;
+            color: #2E7D32;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 10px 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        #timer {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            color: #D32F2F;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 10px 20px;
+            border-radius: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        #game-over {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            display: none;
+        }
+        
+        #start-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 20px;
+            border-radius: 50px;
+            margin-top: 20px;
+            cursor: pointer;
+            font-family: 'Comic Sans MS', cursive;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            background: #2E7D32;
+            transform: scale(1.05);
+        }
+        
+        h1 {
+            color: #6A11CB;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .instructions {
+            max-width: 500px;
+            margin: 20px;
+            color: #333;
+            font-size: 1.2rem;
+        }
+        
+        .feedback {
+            position: absolute;
+            font-size: 24px;
+            font-weight: bold;
+            animation: floatUp 1s forwards;
+            opacity: 0;
+        }
+        
+        @keyframes floatUp {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-100px); opacity: 0; }
+        }
+        /* Celebration Animation Styles */
+        .celebration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+            display: none;
+            overflow: hidden;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            opacity: 0;
+            animation: confettiFall 3s linear forwards;
+        }
+
+        .celebration-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3rem;
+            font-weight: bold;
+            color: #FFD700;
+            text-shadow: 3px 3px 0 #6A11CB, 
+                        -3px -3px 0 #6A11CB,
+                        0 3px 0 #6A11CB,
+                        0 -3px 0 #6A11CB;
+            opacity: 0;
+            animation: textCelebrate 2s ease-out;
+            z-index: 101;
+            text-align: center;
+        }
+
+        @keyframes textCelebrate {
+            0% { transform: translate(-50%, -50%) scale(0.1); opacity: 0; }
+            20% { transform: translate(-50%, -50%) scale(1.3); opacity: 1; }
+            40% { transform: translate(-50%, -50%) scale(0.9); }
+            60% { transform: translate(-50%, -50%) scale(1.1); }
+            80% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+        }
+
+        @keyframes confettiFall {
+            0% { 
+                transform: translateY(-100px) rotate(0deg) scale(0.5); 
+                opacity: 1; 
+            }
+            100% { 
+                transform: translateY(100vh) rotate(360deg) scale(1); 
+                opacity: 0; 
+            }
+        }
+
+        .final-celebration {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 99;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div id="start-screen">
+            <h1>Food Catch Adventure!</h1>
+            <div class="instructions">
+                <p>Catch healthy foods like fruits and vegetables in your basket!</p>
+                <p>Avoid unhealthy junk food to keep your score high.</p>
+                <p>You have 60 seconds - how many points can you get?</p>
+            </div>
+            <button id="start-button">Start Game</button>
+        </div>
+        
+        <div id="basket"></div>
+        <div id="score-display">Score: 0</div>
+        <div id="timer">Time: 60</div>
+        
+        <div id="game-over">
+            <h1>Game Over!</h1>
+            <p id="final-score">Your score: 0</p>
+            <button id="restart-button">Play Again</button>
+        </div>
+    </div>
+    <div id="celebration" class="celebration"></div>
+    <div id="celebration-text" class="celebration-text"></div>
+    
+    <script>
+        // Game variables
+        let score = 0;
+        let timeLeft = 60;
+        let gameInterval;
+        let timerInterval;
+        let isGameRunning = false;
+        const foods = [
+            { type: 'healthy', emoji: '🍎', points: 1, class: 'apple' },
+            { type: 'healthy', emoji: '🍐', points: 1, class: 'pear' },
+            { type: 'healthy', emoji: '🍊', points: 1, class: 'orange' },
+            { type: 'healthy', emoji: '🍓', points: 2, class: 'strawberry' },
+            { type: 'healthy', emoji: '🥕', points: 1, class: 'carrot' },
+            { type: 'healthy', emoji: '🥦', points: 2, class: 'broccoli' },
+            { type: 'unhealthy', emoji: '🍔', points: -2, class: 'burger' },
+            { type: 'unhealthy', emoji: '🍟', points: -1, class: 'fries' },
+            { type: 'unhealthy', emoji: '🍕', points: -2, class: 'pizza' },
+            { type: 'unhealthy', emoji: '🍩', points: -3, class: 'donut' },
+            { type: 'unhealthy', emoji: '🍫', points: -2, class: 'chocolate' }
+        ];
+
+        // DOM elements
+        const gameContainer = document.getElementById('game-container');
+        const basket = document.getElementById('basket');
+        const scoreDisplay = document.getElementById('score-display');
+        const timerDisplay = document.getElementById('timer');
+        const gameOverScreen = document.getElementById('game-over');
+        const finalScoreDisplay = document.getElementById('final-score');
+        const startButton = document.getElementById('start-button');
+        const restartButton = document.getElementById('restart-button');
+        const startScreen = document.getElementById('start-screen');
+
+        // Event listeners
+        startButton.addEventListener('click', startGame);
+        restartButton.addEventListener('click', restartGame);
+        
+        // Mouse/touch controls
+        gameContainer.addEventListener('mousemove', moveBasket);
+        gameContainer.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            moveBasket({ clientX: touch.clientX });
+        });
+
+        function moveBasket(e) {
+            if (!isGameRunning) return;
+            
+            const containerRect = gameContainer.getBoundingClientRect();
+            let xPos = e.clientX - containerRect.left - (basket.offsetWidth / 2);
+            
+            // Keep basket within bounds
+            xPos = Math.max(0, Math.min(xPos, containerRect.width - basket.offsetWidth));
+            
+            basket.style.left = `${xPos}px`;
+        }
+
+        function startGame() {
+            score = 0;
+            timeLeft = 60;
+            isGameRunning = true;
+            
+            // Hide start screen
+            startScreen.style.display = 'none';
+            
+            // Clear any existing food
+            document.querySelectorAll('.food').forEach(food => food.remove());
+            
+            // Update displays
+            scoreDisplay.textContent = `Score: ${score}`;
+            timerDisplay.textContent = `Time: ${timeLeft}`;
+            
+            // Start game loops
+            gameInterval = setInterval(createFood, 1000);
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function createFood() {
+            if (!isGameRunning) return;
+            
+            const food = foods[Math.floor(Math.random() * foods.length)];
+            const foodElement = document.createElement('div');
+            foodElement.className = `food ${food.class}`;
+            foodElement.textContent = food.emoji;
+            foodElement.style.fontSize = '40px';
+            foodElement.style.textAlign = 'center';
+            foodElement.style.lineHeight = '50px';
+            
+            // Position at random x at top of screen
+            const xPos = Math.random() * (gameContainer.offsetWidth - 50);
+            foodElement.style.left = `${xPos}px`;
+            foodElement.style.top = '-50px';
+            
+            // Set data attributes
+            foodElement.dataset.type = food.type;
+            foodElement.dataset.points = food.points;
+            
+            gameContainer.appendChild(foodElement);
+            
+            // Animate falling
+            const fallSpeed = 2 + Math.random() * 3; // Vary speed
+            const fallAnimation = foodElement.animate(
+                [{ top: '-50px' }, { top: `${gameContainer.offsetHeight}px` }],
+                { duration: 3000 / fallSpeed, fill: 'forwards' }
+            );
+            
+            fallAnimation.onfinish = () => {
+                if (foodElement.parentNode) {
+                    foodElement.remove();
+                }
+            };
+            
+            // Check for collision with basket
+            const checkCollision = setInterval(() => {
+                if (!isGameRunning || !foodElement.parentNode) {
+                    clearInterval(checkCollision);
+                    return;
+                }
+                
+                const foodRect = foodElement.getBoundingClientRect();
+                const basketRect = basket.getBoundingClientRect();
+                
+                if (
+                    foodRect.bottom >= basketRect.top &&
+                    foodRect.top <= basketRect.bottom &&
+                    foodRect.right >= basketRect.left &&
+                    foodRect.left <= basketRect.right
+                ) {
+                    // Collision detected
+                    clearInterval(checkCollision);
+                    updateScore(parseInt(foodElement.dataset.points));
+                    showFeedback(foodElement.dataset.type, foodElement.dataset.points, foodRect);
+                    foodElement.remove();
+                }
+            }, 50); // ~60fps
+        }
+
+        function updateScore(points) {
+            score += points;
+            scoreDisplay.textContent = `Score: ${score}`;
+        }
+
+        function showFeedback(type, points, position) {
+            const feedback = document.createElement('div');
+            feedback.className = 'feedback';
+            
+            if (points > 0) {
+                feedback.textContent = `+${points}`;
+                feedback.style.color = '#2E7D32'; // Green
+            } else {
+                feedback.textContent = points;
+                feedback.style.color = '#D32F2F'; // Red
+            }
+            
+            feedback.style.left = `${position.left}px`;
+            feedback.style.top = `${position.top}px`;
+            
+            gameContainer.appendChild(feedback);
+            
+            // Remove after animation
+            setTimeout(() => {
+                feedback.remove();
+            }, 1000);
+        }
+
+        function updateTimer() {
+            timeLeft--;
+            timerDisplay.textContent = `Time: ${timeLeft}`;
+            
+            if (timeLeft <= 0) {
+                endGame();
+            }
+        }
+
+        function endGame() {
+            isGameRunning = false;
+            clearInterval(gameInterval);
+            clearInterval(timerInterval);
+            
+            // Show game over screen
+            finalScoreDisplay.textContent = `Your score: ${score}`;
+            gameOverScreen.style.display = 'block';
+            
+            // Remove all falling foods
+            document.querySelectorAll('.food').forEach(food => food.remove());
+        }
+
+        function restartGame() {
+            gameOverScreen.style.display = 'none';
+            startGame();
+        }
+        let lastCelebrationScore = 0;
+
+        function updateScore(points) {
+            score += points;
+            scoreDisplay.textContent = `Score: ${score}`;
+            
+            // Trigger celebration every 5 points (but only once per 5-point increment)
+            if (score >= 5 && Math.floor(score / 5) > Math.floor(lastCelebrationScore / 5)) {
+                showCelebration(`Great! ${score} points!`);
+            }
+            lastCelebrationScore = score;
+        }
+
+        function showCelebration(message) {
+            const celebration = document.getElementById('celebration');
+            const celebrationText = document.getElementById('celebration-text');
+            
+            // Create confetti
+            celebration.innerHTML = '';
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                
+                // Random properties
+                const colors = ['#4CAF50', '#FFD700', '#6A11CB', '#FF5252', '#00BCD4', '#FF9800'];
+                const shapes = ['■', '▲', '●', '♥', '★'];
+                
+                confetti.style.left = `${Math.random() * 100}%`;
+                confetti.style.animationDelay = `${Math.random() * 0.5}s`;
+                confetti.style.color = colors[Math.floor(Math.random() * colors.length)];
+                confetti.textContent = shapes[Math.floor(Math.random() * shapes.length)];
+                confetti.style.fontSize = `${Math.random() * 20 + 10}px`;
+                
+                celebration.appendChild(confetti);
+            }
+            
+            // Set celebration text
+            celebrationText.textContent = message;
+            
+            // Show celebration
+            celebration.style.display = 'block';
+            celebrationText.style.display = 'block';
+            
+            // Hide after animation
+            setTimeout(() => {
+                celebration.style.display = 'none';
+                celebrationText.style.display = 'none';
+            }, 2000);
+        }
+
+        function endGame() {
+            isGameRunning = false;
+            clearInterval(gameInterval);
+            clearInterval(timerInterval);
+            
+            // Show final celebration if score is 5+
+            if (score >= 5) {
+                showFinalCelebration();
+            } else {
+                // Normal game over screen
+                finalScoreDisplay.textContent = `Your score: ${score}`;
+                gameOverScreen.style.display = 'block';
+            }
+            
+            document.querySelectorAll('.food').forEach(food => food.remove());
+        }
+
+        function showFinalCelebration() {
+            const celebration = document.getElementById('celebration');
+            const celebrationText = document.getElementById('celebration-text');
+            
+            // Create more intense confetti
+            celebration.innerHTML = '';
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                
+                const colors = ['#4CAF50', '#FFD700', '#6A11CB', '#FF5252', '#00BCD4', '#FF9800'];
+                const shapes = ['■', '▲', '●', '♥', '★'];
+                
+                confetti.style.left = `${Math.random() * 100}%`;
+                confetti.style.animationDelay = `${Math.random() * 0.5}s`;
+                confetti.style.color = colors[Math.floor(Math.random() * colors.length)];
+                confetti.textContent = shapes[Math.floor(Math.random() * shapes.length)];
+                confetti.style.fontSize = `${Math.random() * 20 + 10}px`;
+                
+                celebration.appendChild(confetti);
+            }
+            
+            // Set celebration text
+            celebrationText.textContent = `Awesome! You got ${score} points!`;
+            
+            // Show celebration
+            celebration.style.display = 'block';
+            celebrationText.style.display = 'block';
+            
+            // Show game over screen after celebration
+            setTimeout(() => {
+                celebration.style.display = 'none';
+                celebrationText.style.display = 'none';
+                finalScoreDisplay.textContent = `Your score: ${score}`;
+                gameOverScreen.style.display = 'block';
+            }, 3000);
+        }
+
+    </script>
+</body>
+</html>

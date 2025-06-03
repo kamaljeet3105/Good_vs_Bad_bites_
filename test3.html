@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Hero Adventure</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #d4f7d4;
+            margin: 0;
+            padding: 20px;
+            overflow: hidden;
+        }
+        .game-container {
+            position: relative;
+            width: 800px;
+            height: 500px;
+            margin: auto;
+            border: 3px solid black;
+            background-color: #f0f0f0;
+            overflow: hidden;
+        }
+        .hero, .food, .junk {
+            position: absolute;
+            font-size: 40px;
+        }
+        .hero {
+            left: 50%;
+            bottom: 20px;
+        }
+        .food, .junk {
+            top: 10px;
+        }
+        .message-box {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .celebration {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(255, 223, 0, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            box-shadow: 0px 0px 15px gold;
+            animation: sparkle 1s infinite alternate;
+        }
+        @keyframes sparkle {
+            0% { opacity: 0.5; transform: scale(1); }
+            100% { opacity: 1; transform: scale(1.2); }
+        }
+    </style>
+</head>
+<body>
+    <h1>Food Hero Adventure 🍏</h1>
+    <div class="game-container" id="game-container">
+        <div class="hero" id="hero">🦸‍♂️</div>
+    </div>
+    <p>Use Arrow Keys to Move | Collect Healthy Foods | Avoid Junk Food!</p>
+    <h2>Score: <span id="score">0</span></h2>
+    <div class="message-box" id="message">Start collecting healthy foods!</div>
+    <div class="celebration" id="celebration">🎉 Great job! Keep eating healthy! 🎉</div>
+    
+    <script>
+        const hero = document.getElementById("hero");
+        const gameContainer = document.getElementById("game-container");
+        const scoreDisplay = document.getElementById("score");
+        const messageBox = document.getElementById("message");
+        const celebration = document.getElementById("celebration");
+        let score = 0;
+        let heroSpeed = 10;
+
+        document.addEventListener("keydown", (event) => {
+            let heroPos = hero.getBoundingClientRect();
+            let fieldPos = gameContainer.getBoundingClientRect();
+            
+            if (event.key === "ArrowLeft" && heroPos.left > fieldPos.left) {
+                hero.style.left = hero.offsetLeft - heroSpeed + "px";
+            } else if (event.key === "ArrowRight" && heroPos.right < fieldPos.right) {
+                hero.style.left = hero.offsetLeft + heroSpeed + "px";
+            }
+        });
+        
+        function spawnFood() {
+            let food = document.createElement("div");
+            food.classList.add("food");
+            food.textContent = "🍎";
+            food.style.left = Math.random() * (gameContainer.clientWidth - 40) + "px";
+            food.style.top = "0px";
+            gameContainer.appendChild(food);
+            moveFood(food, true);
+        }
+
+        function spawnJunk() {
+            let junk = document.createElement("div");
+            junk.classList.add("junk");
+            junk.textContent = "🍟";
+            junk.style.left = Math.random() * (gameContainer.clientWidth - 40) + "px";
+            junk.style.top = "0px";
+            gameContainer.appendChild(junk);
+            moveFood(junk, false);
+        }
+
+        function moveFood(item, isHealthy) {
+            let interval = setInterval(() => {
+                item.style.top = item.offsetTop + 5 + "px";
+                
+                if (item.offsetTop > gameContainer.clientHeight) {
+                    item.remove();
+                    clearInterval(interval);
+                }
+                
+                let heroPos = hero.getBoundingClientRect();
+                let itemPos = item.getBoundingClientRect();
+                
+                if (heroPos.left < itemPos.right && heroPos.right > itemPos.left && heroPos.top < itemPos.bottom && heroPos.bottom > itemPos.top) {
+                    if (isHealthy) {
+                        score += 10;
+                        messageBox.textContent = "Great choice! 🍎 Eating fruits keeps you strong!";
+                    } else {
+                        score -= 5;
+                        messageBox.textContent = "Oh no! 🍟 Junk food can slow you down!";
+                    }
+                    scoreDisplay.textContent = score;
+                    item.remove();
+                    clearInterval(interval);
+                    
+                    if (score >= 50) {
+                        celebration.style.display = "block";
+                        setTimeout(() => { celebration.style.display = "none"; }, 3000);
+                    }
+                }
+            }, 50);
+        }
+
+        setInterval(spawnFood, 2000);
+        setInterval(spawnJunk, 3000);
+    </script>
+</body>
+</html>

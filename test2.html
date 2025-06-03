@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monster Meal Builder - Yummy Edition!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Chewy&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --fruit: #FF9AA2;
+            --veggie: #B5EAD7;
+            --protein: #FFB7B2;
+            --grain: #E2F0CB;
+            --dairy: #C7CEEA;
+            --plate: #FFDAC1;
+            --monster: #FF9AA2;
+            --bg: #FCE2E2;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Bubblegum Sans', cursive;
+            background-color: var(--bg);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(255,255,255,0.8) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(255,255,255,0.8) 0%, transparent 20%);
+        }
+
+        header {
+            background: linear-gradient(90deg, #FF9AA2, #FFB7B2, #FFDAC1, #E2F0CB, #B5EAD7, #C7CEEA);
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 3rem;
+            text-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+            font-family: 'Chewy', cursive;
+            color: #6A11CB;
+            position: relative;
+            z-index: 2;
+        }
+
+        .header-decoration {
+            position: absolute;
+            font-size: 2rem;
+            animation: float 5s infinite ease-in-out;
+            opacity: 0.7;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1rem;
+            position: relative;
+        }
+
+        .monster-container {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            margin: 1rem 0;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        #monster {
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="%23FF9AA2"/><circle cx="35" cy="40" r="5" fill="%23333"/><circle cx="65" cy="40" r="5" fill="%23333"/><path d="M35,65 Q50,75 65,65" fill="none" stroke="%23333" stroke-width="2"/></svg>');
+            background-size: contain;
+            background-repeat: no-repeat;
+            transition: all 0.3s ease;
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.2));
+            animation: bounce 2s infinite alternate;
+        }
+
+        @keyframes bounce {
+            0% { transform: translateY(0) scale(1); }
+            100% { transform: translateY(-20px) scale(1.05); }
+        }
+
+        #monster-face {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-size: contain;
+            background-repeat: no-repeat;
+            opacity: 0;
+            transition: all 0.5s ease;
+            z-index: 2;
+        }
+
+        .happy-face {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M30,60 Q50,80 70,60" fill="none" stroke="%234CAF50" stroke-width="8" stroke-linecap="round"/></svg>');
+            animation: happyJump 0.5s ease-out;
+        }
+
+        .sad-face {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M30,70 Q50,50 70,70" fill="none" stroke="%23FF5252" stroke-width="8" stroke-linecap="round"/></svg>');
+            animation: sadShake 0.5s linear;
+        }
+
+        @keyframes happyJump {
+            0% { transform: translate(-50%, -50%) scale(0.5); }
+            50% { transform: translate(-50%, -70%) scale(1.2); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        @keyframes sadShake {
+            0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+            25% { transform: translate(-50%, -50%) rotate(-10deg); }
+            75% { transform: translate(-50%, -50%) rotate(10deg); }
+        }
+
+        .meal-plate {
+            width: 220px;
+            height: 220px;
+            background-color: var(--plate);
+            border-radius: 50%;
+            border: 12px solid #FFB7B2;
+            box-shadow: 
+                0 8px 15px rgba(0,0,0,0.1),
+                inset 0 0 20px rgba(255,255,255,0.5);
+            margin: 1rem 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .meal-plate:hover {
+            transform: rotate(5deg) scale(1.02);
+        }
+
+        .plate-food {
+            width: 50px;
+            height: 50px;
+            font-size: 2rem;
+            margin: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+            animation: popIn 0.5s ease-out;
+            filter: drop-shadow(2px 4px 4px rgba(0,0,0,0.2));
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            80% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .food-bank {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin: 1rem 0;
+            max-width: 500px;
+            padding: 20px;
+            background: rgba(255,255,255,0.7);
+            border-radius: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .food-item {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            cursor: grab;
+            user-select: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+            position: relative;
+            animation: float 3s infinite ease-in-out;
+            transform-style: preserve-3d;
+        }
+
+        .food-item:hover {
+            transform: scale(1.1) rotate(10deg);
+            z-index: 10;
+        }
+
+        .food-item:active {
+            cursor: grabbing;
+            transform: scale(1.2) rotate(15deg);
+            animation: none;
+        }
+
+        .fruit { 
+            background-color: var(--fruit);
+            animation-delay: 0.1s;
+        }
+        .veggie { 
+            background-color: var(--veggie);
+            animation-delay: 0.2s;
+        }
+        .protein { 
+            background-color: var(--protein);
+            animation-delay: 0.3s;
+        }
+        .grain { 
+            background-color: var(--grain);
+            animation-delay: 0.4s;
+        }
+        .dairy { 
+            background-color: var(--dairy);
+            animation-delay: 0.5s;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        button {
+            background-color: #6A11CB;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-family: 'Chewy', cursive;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        button:active {
+            transform: translateY(2px);
+        }
+
+        button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: rgba(255,255,255,0.2);
+            transform: rotate(45deg);
+            transition: all 0.5s;
+        }
+
+        button:hover::after {
+            left: 100%;
+        }
+
+        .score-display {
+            font-size: 2rem;
+            margin: 1rem 0;
+            color: #6A11CB;
+            font-weight: bold;
+            font-family: 'Chewy', cursive;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+            background: rgba(255,255,255,0.7);
+            padding: 10px 25px;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .celebration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+            display: none;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            opacity: 0;
+            animation: confettiFall 3s linear forwards;
+            font-size: 1.5rem;
+        }
+
+        @keyframes confettiFall {
+            0% { 
+                transform: translateY(-100px) rotate(0deg) scale(0.5); 
+                opacity: 1; 
+            }
+            100% { 
+                transform: translateY(100vh) rotate(360deg) scale(1); 
+                opacity: 0; 
+            }
+        }
+
+        .feedback {
+            position: absolute;
+            font-size: 2rem;
+            font-weight: bold;
+            animation: floatUp 1s forwards;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 10;
+            font-family: 'Chewy', cursive;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(0.5); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100px) scale(1.5); opacity: 0; }
+        }
+
+        .food-name-tag {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            opacity: 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            white-space: nowrap;
+        }
+
+        .food-item:hover .food-name-tag {
+            opacity: 1;
+            bottom: -30px;
+        }
+
+        .plate-decoration {
+            position: absolute;
+            font-size: 1.5rem;
+            animation: rotate 10s linear infinite;
+            opacity: 0.3;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .monster-container {
+                width: 180px;
+                height: 180px;
+            }
+            
+            .meal-plate {
+                width: 180px;
+                height: 180px;
+            }
+            
+            .food-item {
+                width: 60px;
+                height: 60px;
+                font-size: 2rem;
+            }
+            
+            button {
+                font-size: 1.2rem;
+                padding: 10px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Monster Meal Builder</h1>
+        <div class="header-decoration" style="left: 10%; top: 10%;">🍎</div>
+        <div class="header-decoration" style="left: 20%; top: 80%;">🍗</div>
+        <div class="header-decoration" style="left: 80%; top: 20%;">🥦</div>
+        <div class="header-decoration" style="left: 90%; top: 70%;">🧀</div>
+    </header>
+
+    <div class="game-container">
+        <div class="score-display">Score: <span id="score">0</span></div>
+        
+        <div class="monster-container">
+            <div id="monster"></div>
+            <div id="monster-face"></div>
+        </div>
+        
+        <div class="meal-plate" id="plate">
+            <div id="plate-items"></div>
+            <div class="plate-decoration" style="top: 0; left: 10%;">🍽️</div>
+            <div class="plate-decoration" style="top: 10%; right: 0;">✨</div>
+            <div class="plate-decoration" style="bottom: 0; left: 20%;">🌟</div>
+        </div>
+        
+        <div class="food-bank" id="food-bank">
+            <!-- Food items will be added by JavaScript -->
+        </div>
+        
+        <div class="controls">
+            <button id="feed-btn">Feed Monster! 🍴</button>
+            <button id="clear-btn">Clear Plate 🗑️</button>
+        </div>
+    </div>
+    
+    <div id="celebration" class="celebration"></div>
+
+    <audio id="happy-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-happy-crowd-cheer-1743.mp3" preload="auto"></audio>
+    <audio id="sad-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-sad-game-over-trombone-471.mp3" preload="auto"></audio>
+    <audio id="pop-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-positive-interface-beep-221.mp3" preload="auto"></audio>
+    <audio id="celebrate-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3" preload="auto"></audio>
+
+    <script>
+        // Food database with more fun items
+        const foods = [
+            { emoji: '🍎', name: 'Crunchy Apple', type: 'fruit', points: 1 },
+            { emoji: '🍐', name: 'Juicy Pear', type: 'fruit', points: 1 },
+            { emoji: '🍊', name: 'Sweet Orange', type: 'fruit', points: 1 },
+            { emoji: '🍓', name: 'Yummy Strawberry', type: 'fruit', points: 1 },
+            { emoji: '🍉', name: 'Watermelon Slice', type: 'fruit', points: 1 },
+            { emoji: '🥕', name: 'Crunchy Carrot', type: 'veggie', points: 1 },
+            { emoji: '🥦', name: 'Broccoli Tree', type: 'veggie', points: 1 },
+            { emoji: '🍅', name: 'Red Tomato', type: 'veggie', points: 1 },
+            { emoji: '🍗', name: 'Chicken Leg', type: 'protein', points: 2 },
+            { emoji: '🥚', name: 'Egg', type: 'protein', points: 2 },
+            { emoji: '🥩', name: 'Tasty Steak', type: 'protein', points: 2 },
+            { emoji: '🍞', name: 'Bread Slice', type: 'grain', points: 1 },
+            { emoji: '🍝', name: 'Spaghetti', type: 'grain', points: 1 },
+            { emoji: '🥛', name: 'Milk Glass', type: 'dairy', points: 1 },
+            { emoji: '🧀', name: 'Cheese Wedge', type: 'dairy', points: 1 },
+            { emoji: '🍦', name: 'Ice Cream', type: 'dairy', points: 1 }
+        ];
+
+        // Game variables
+        let score = 0;
+        let currentPlate = [];
+        const maxPlateItems = 6;
+
+        // DOM elements
+        const foodBank = document.getElementById('food-bank');
+        const plateItems = document.getElementById('plate-items');
+        const feedBtn = document.getElementById('feed-btn');
+        const clearBtn = document.getElementById('clear-btn');
+        const scoreDisplay = document.getElementById('score');
+        const monsterFace = document.getElementById('monster-face');
+        const celebration = document.getElementById('celebration');
+        const happySound = document.getElementById('happy-sound');
+        const sadSound = document.getElementById('sad-sound');
+        const popSound = document.getElementById('pop-sound');
+        const celebrateSound = document.getElementById('celebrate-sound');
+
+        // Initialize game
+        function initGame() {
+            // Create food items
+            foods.forEach((food, index) => {
+                const foodElement = document.createElement('div');
+                foodElement.className = `food-item ${food.type}`;
+                foodElement.textContent = food.emoji;
+                foodElement.dataset.index = index;
+                foodElement.draggable = true;
+                
+                // Add name tag
+                const nameTag = document.createElement('div');
+                nameTag.className = 'food-name-tag';
+                nameTag.textContent = food.name;
+                foodElement.appendChild(nameTag);
+                
+                // Add drag events
+                foodElement.addEventListener('dragstart', dragStart);
+                
+                foodBank.appendChild(foodElement);
+            });
+            
+            // Set up plate as drop target
+            const plate = document.getElementById('plate');
+            plate.addEventListener('dragover', dragOver);
+            plate.addEventListener('drop', drop);
+            
+            // Button events
+            feedBtn.addEventListener('click', feedMonster);
+            clearBtn.addEventListener('click', clearPlate);
+        }
+
+        // Drag and drop functions
+        function dragStart(e) {
+            e.dataTransfer.setData('text/plain', e.target.dataset.index);
+            popSound.currentTime = 0;
+            popSound.play();
+        }
+
+        function dragOver(e) {
+            e.preventDefault();
+        }
+
+        function drop(e) {
+            e.preventDefault();
+            if (currentPlate.length >= maxPlateItems) return;
+            
+            const foodIndex = e.dataTransfer.getData('text/plain');
+            addToPlate(parseInt(foodIndex));
+        }
+
+        // Add food to plate
+        function addToPlate(foodIndex) {
+            if (currentPlate.length >= maxPlateItems) return;
+            
+            const food = foods[foodIndex];
+            currentPlate.push(food);
+            
+            const plateFood = document.createElement('div');
+            plateFood.className = `plate-food ${food.type}`;
+            plateFood.textContent = food.emoji;
+            plateItems.appendChild(plateFood);
+            
+            // Play pop sound
+            popSound.currentTime = 0;
+            popSound.play();
+        }
+
+        // Feed the monster
+        function feedMonster() {
+            if (currentPlate.length === 0) return;
+            
+            // Calculate score based on variety
+            const foodGroups = new Set(currentPlate.map(food => food.type));
+            const varietyBonus = foodGroups.size * 10;
+            const mealScore = currentPlate.reduce((sum, food) => sum + food.points, 0) + varietyBonus;
+            
+            // Update score
+            score += mealScore;
+            scoreDisplay.textContent = score;
+            
+            // Show feedback
+            showFeedback(`+${mealScore}`, mealScore > 15 ? 'happy' : 'sad');
+            
+            // Monster reaction
+            showMonsterFace(mealScore > 15 ? 'happy' : 'sad');
+            
+            // Play appropriate sound
+            if (mealScore > 15) {
+                happySound.currentTime = 0;
+                happySound.play();
+                showCelebration();
+            } else {
+                sadSound.currentTime = 0;
+                sadSound.play();
+            }
+            
+            // Clear plate after short delay
+            setTimeout(clearPlate, 1500);
+        }
+
+        // Clear the plate
+        function clearPlate() {
+            currentPlate = [];
+            plateItems.innerHTML = '';
+            hideMonsterFace();
+        }
+
+        // Show monster face reaction
+        function showMonsterFace(type) {
+            monsterFace.className = `${type}-face`;
+            monsterFace.style.opacity = '1';
+            
+            setTimeout(() => {
+                monsterFace.style.opacity = '0';
+            }, 1500);
+        }
+
+        function hideMonsterFace() {
+            monsterFace.style.opacity = '0';
+        }
+
+        // Show feedback animation
+        function showFeedback(text, type) {
+            const feedback = document.createElement('div');
+            feedback.className = 'feedback';
+            feedback.textContent = text;
+            feedback.style.color = type === 'happy' ? '#4CAF50' : '#FF5252';
+            feedback.style.left = `${Math.random() * 50 + 25}%`;
+            feedback.style.top = '60%';
+            
+            document.querySelector('.game-container').appendChild(feedback);
+            
+            setTimeout(() => {
+                feedback.remove();
+            }, 1000);
+        }
+
+        // Show celebration animation
+        function showCelebration() {
+            celebrateSound.currentTime = 0;
+            celebrateSound.play();
+            
+            celebration.innerHTML = '';
+            
+            // Create confetti
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                
+                const colors = ['#FF9AA2', '#FFB7B2', '#FFDAC1', '#E2F0CB', '#B5EAD7', '#C7CEEA'];
+                const shapes = ['🍎', '🍐', '🍊', '🍓', '🥕', '🥦', '🍗', '🥚', '🥩', '🍞', '🍝', '🥛', '🧀'];
+                
+                confetti.style.left = `${Math.random() * 100}%`;
+                confetti.style.animationDelay = `${Math.random() * 0.5}s`;
+                confetti.style.color = colors[Math.floor(Math.random() * colors.length)];
+                confetti.textContent = shapes[Math.floor(Math.random() * shapes.length)];
+                confetti.style.fontSize = `${Math.random() * 20 + 15}px`;
+                
+                celebration.appendChild(confetti);
+            }
+            
+            celebration.style.display = 'block';
+            
+            setTimeout(() => {
+                celebration.style.display = 'none';
+            }, 3000);
+        }
+
+        // Touch support for mobile devices
+        function setupTouchEvents() {
+            const foodItems = document.querySelectorAll('.food-item');
+            
+            foodItems.forEach(item => {
+                item.addEventListener('touchmove', touchMove, { passive: false });
+                item.addEventListener('touchend', touchEnd);
+            });
+            
+            const plate = document.getElementById('plate');
+            plate.addEventListener('touchmove', touchMovePlate, { passive: false });
+            plate.addEventListener('touchend', touchEndPlate);
+        }
+
+        let draggedItem = null;
+
+        function touchMove(e) {
+            e.preventDefault();
+            if (!draggedItem) {
+                draggedItem = e.target;
+                draggedItem.style.position = 'absolute';
+                draggedItem.style.zIndex = '100';
+            }
+            
+            const touch = e.touches[0];
+            draggedItem.style.left = `${touch.clientX - draggedItem.offsetWidth / 2}px`;
+            draggedItem.style.top = `${touch.clientY - draggedItem.offsetHeight / 2}px`;
+        }
+
+        function touchEnd(e) {
+            if (draggedItem) {
+                draggedItem.style.position = '';
+                draggedItem.style.zIndex = '';
+                draggedItem.style.left = '';
+                draggedItem.style.top = '';
+                draggedItem = null;
+            }
+        }
+
+        function touchMovePlate(e) {
+            e.preventDefault();
+        }
+
+        function touchEndPlate(e) {
+            if (draggedItem && currentPlate.length < maxPlateItems) {
+                const foodIndex = draggedItem.dataset.index;
+                addToPlate(parseInt(foodIndex));
+            }
+        }
+
+        // Start the game
+        initGame();
+        setupTouchEvents();
+    </script>
+</body>
+</html>

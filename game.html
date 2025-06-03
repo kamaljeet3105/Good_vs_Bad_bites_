@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Info - Fun Learning for Kids!</title>
+    <style>
+        body {
+           
+            text-align: center;
+            /* overflow-x: hidden; */
+            /* position: relative; */
+            margin: 0;
+            font-family: 'Comic Neue', cursive;
+            background: linear-gradient(to bottom right, #c5f5c3, #f6d7d7); 
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-top: 50px;
+            color: #ff4d4d;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .info-box {
+            padding: 30px;
+            border: 5px dashed #ff6600;
+            background: linear-gradient(135deg, #ffecd2, #fcb69f);
+            border-radius: 25px;
+            display: inline-block;
+            margin-top: 10px;
+            position: relative;
+            box-shadow: 0 0 20px rgba(255, 153, 0, 0.5);
+            animation: slideIn 1.5s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        h2 {
+            color: #ff6600;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        button {
+            margin-top: 40px;
+            padding: 15px 30px;
+            font-size: 1.5em;
+            border-radius: 15px;
+            border: none;
+            background-color: #ff6600;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #ff944d;
+            transform: scale(1.1);
+        }
+
+        .falling-food {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    top: -100px;
+    left: var(--x);
+    animation: fall linear forwards;
+    animation-duration: calc(4s + (3s * var(--i)));
+    transform-origin: center;
+}
+
+@keyframes fall {
+    0% { 
+        top: -100px; 
+        transform: rotate(0deg) translateX(0px); 
+    }
+    100% { 
+        top: 100vh; 
+        transform: rotate(720deg) translateX(40px); 
+    }
+}
+
+/* Healthy foods fall straight and smooth */
+.falling-fruit {
+    animation-name: fallFruit;
+    animation-delay: calc(1s * var(--i));
+}
+
+@keyframes fallFruit {
+    0% { top: -100px; transform: rotate(0deg); }
+    100% { top: 100vh; transform: rotate(360deg); }
+}
+
+/* Junk food wobbles while falling */
+.falling-junk {
+    animation-name: fallJunk;
+    animation-delay: calc(2s * var(--i));
+}
+
+@keyframes fallJunk {
+    0% { top: -100px; transform: rotate(0deg) translateX(0px); }
+    50% { transform: rotate(180deg) translateX(-30px); }
+    100% { top: 100vh; transform: rotate(360deg) translateX(30px); }
+}
+
+
+        /* Healthy boy and unhealthy boy */
+        #healthy-boy, #unhealthy-boy {
+            width: 150px;
+            display: none;
+            margin-top: 50px;
+        }
+        .logo {
+      display: flex;
+      width: 120px;
+      height: 90px;
+      border-radius: 0px;
+      overflow: hidden;
+      box-shadow: 2px 2px 15px rgb(249, 247, 247);
+      cursor: pointer;
+    }
+    .logo:hover{
+        box-shadow: 2px 2px 15px rgb(0, 0, 0);
+    }
+    .good-side, .bad-side {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      transition: transform 0.3s;
+    }
+    .good-side {
+      background: linear-gradient(135deg, #8fdb8b, #52b56a);
+      color: white;
+    }
+    .bad-side {
+      background: linear-gradient(135deg, #f77b7b, #d94545);
+      color: white;
+    }
+    .logo:hover .good-side {
+      transform: scale(1.1) rotate(-5deg);
+    }
+    .logo:hover .bad-side {
+      transform: scale(1.1) rotate(5deg);
+    }
+    .label {
+      font-size: 12px;
+      margin-top: 17px;
+      font-weight: bold;
+    }
+    footer{
+            background: linear-gradient(to right, #8fdb8b, #52b56a); /* Green garden shades */
+            border-top: 5px solid #ff4444; 
+            border-bottom: 5px solid #ff4444; /* fun red border for contrast */
+            text-align: center;
+            color: white;
+            padding: 10px;
+            margin-top: 80px;
+        }
+        nav {
+            background: linear-gradient(to right, #8fdb8b, #52b56a); /* Green garden shades */
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 5px solid #ff4444; 
+            border-bottom: 5px solid #ff4444; /* fun red border for contrast */
+            box-shadow: 0 4px 8px rgba(28, 29, 28, 0.2);
+            padding: 5px 5px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        nav img {
+            height: 60px;
+            border-radius: 50%;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 23px;
+            transition: all 0.3s;
+            
+        }
+        nav a:hover {
+            color:#ff4444;
+            transform: scale(1.2);
+        }
+
+    </style>
+</head>
+<body>
+    
+<nav>
+    <div class="logo">
+        <div class="good-side">
+          <div>🥦🍎</div>
+          <div class="label">Good Food</div>
+        </div>
+        <div class="bad-side">
+          <div>🍩🍔</div>
+          <div class="label">Bad Food</div>
+        </div>
+      </div>
+    <div style="display: flex; gap: 50px;">
+        <a href="mainIndex.html">🏠 Home</a>
+        <a href="index.html">📚 Learn</a>
+        <a href="game.html">🎮 Play Game</a>
+        <a href="monkey-teach.html">▶️ Video</a>
+        <a href="about.html">ℹ️ About Us</a>
+    </div>
+</nav>
+    <h1>🍎 Learn Healthy & Unhealthy Foods! 🍔</h1>
+    <div class="card">
+        <div class="info-box" id="food-info">
+            <h2>Pick Your Food 🍽️</h2>
+            <p>Click on a healthy or unhealthy food, and I'll show you what happens! 😄</p>
+            <img id="healthy-boy" src="healthkid.png" alt="Healthy Kid" style="display:none; width:150px; margin-top:10px;">
+            <img id="unhealthy-boy" src="unhealthykid.png" alt="Unhealthy Kid" style="display:none; width:150px; margin-top:10px;">
+        </div>
+    </div>
+    
+    
+
+    <!-- Button to go back -->
+    <a href="mainIndex.html" style="
+    display: inline-block;
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 30px;
+    border-radius: 30px;
+    font-size: 1.5em;
+    text-decoration: none;
+    font-family: 'Comic Sans MS', cursive;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s, transform 0.2s;
+    margin-top: 50px;
+">
+<!-- display: inline-block;
+background-color: #4CAF50;
+color: white;
+padding: 12px 30px;
+border-radius: 30px;
+font-size: 1.5em;
+text-decoration: none;
+font-family: 'Comic Sans MS', cursive;
+box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+transition: background-color 0.3s, transform 0.2s; -->
+    🏡 Back to Home
+</a>
+<footer >
+    <p>Made with ❤️ for kids' healthy learning </p>
+</footer>
+    
+    <!-- Falling Healthy Foods -->
+    <!-- Combined Falling Healthy and Unhealthy Foods -->
+<img src="apple1.png" class="falling-food" style="--i: 1; --x: 10%;" onclick="showHealthy()">
+<img src="banana1.png" class="falling-food" style="--i: 2; --x: 30%;" onclick="showHealthy()">
+<img src="carrot1.png" class="falling-food" style="--i: 3; --x: 50%;" onclick="showHealthy()">
+<img src="dairy1.png" class="falling-food" style="--i: 4; --x: 70%;" onclick="showHealthy()">
+<img src="brinjal1.png" class="falling-food" style="--i: 5; --x: 90%;" onclick="showHealthy()">
+<img src="cherry.png" class="falling-food" style="--i: 6; --x: 110%;" onclick="showHealthy()">
+<img src="dairy1.png" class="falling-food" style="--i: 7; --x: 50%;" onclick="showHealthy()">
+<img src="rice1.png" class="falling-food" style="--i: 8; --x: 70%;" onclick="showHealthy()">
+<img src="grapes.png" class="falling-food" style="--i: 9; --x: 20%;" onclick="showHealthy()">
+<img src="mango.png" class="falling-food" style="--i: 10; --x: 40%;" onclick="showHealthy()">
+<img src="orange.png" class="falling-food" style="--i: 11; --x: 60%;" onclick="showHealthy()">
+<img src="papaya.png" class="falling-food" style="--i: 12; --x: 70%;" onclick="showHealthy()">
+<img src="pineapple.png" class="falling-food" style="--i: 13; --x: 80%;" onclick="showHealthy()">
+<img src="pmg.png" class="falling-food" style="--i: 14; --x: 90%;" onclick="showHealthy()">
+<img src="potato.png" class="falling-food" style="--i: 15; --x: 100%;" onclick="showHealthy()">
+<img src="watermelon.png" class="falling-food" style="--i: 16; --x: 70%;" onclick="showHealthy()">
+
+<img src="burger1.png" class="falling-food" style="--i: 17; --x: 20%;" onclick="showUnhealthy()">
+<img src="pizza1.png" class="falling-food" style="--i: 18; --x: 40%;" onclick="showUnhealthy()">
+<img src="candy1.png" class="falling-food" style="--i: 19; --x: 60%;" onclick="showUnhealthy()">
+<img src="soda1.png" class="falling-food" style="--i: 20; --x: 80%;" onclick="showUnhealthy()">
+<img src="snack1.png" class="falling-food" style="--i: 21; --x: 100%;" onclick="showUnhealthy()">
+<img src="samosa.png" class="falling-food" style="--i: 22; --x: 120%;" onclick="showUnhealthy()">
+<img src="maggi.png" class="falling-food" style="--i: 23; --x: 50%;" onclick="showUnhealthy()">
+<img src="icecream.png" class="falling-food" style="--i: 24; --x: 80%;" onclick="showUnhealthy()">
+<img src="dotnet.png" class="falling-food" style="--i: 25; --x: 100%;" onclick="showUnhealthy()">
+<img src="cookies.png" class="falling-food" style="--i: 26; --x: 40%;" onclick="showUnhealthy()">
+<img src="biscuit1.png" class="falling-food" style="--i: 27; --x: 120%;" onclick="showUnhealthy()">
+<img src="soda1.png" class="falling-food" style="--i: 28; --x: 90%;" onclick="showUnhealthy()">
+    <script>
+//         function createFallingFood(imageSrc, isGood, index) {
+//     const food = document.createElement('img');
+//     food.src = imageSrc;
+//     food.classList.add('falling-food');
+//     food.classList.add(isGood ? 'falling-fruit' : 'falling-junk');
+//     food.style.setProperty('--x', `${Math.random() * 90}vw`);
+//     food.style.setProperty('--i', index);
+//     document.body.appendChild(food);
+
+//     food.addEventListener('animationend', () => {
+//         food.remove(); // Remove after falling
+//         // Optionally spawn more food:
+//         setTimeout(() => createRandomFood(index), 1000);
+//     });
+
+//     food.onclick = () => {
+//         if (isGood) {
+//             alert("Good Job! That's healthy food 🍎");
+//         } else {
+//             alert("Oops! That's junk food 🍔");
+//         }
+//         food.remove();
+//     };
+// }
+
+// function createRandomFood(i) {
+//     const healthyFoods = ['apple.png', 'banana.png', 'carrot.png', 'grapes.png', 'orange.png', 'watermelon.png'];
+//     const junkFoods = ['burger.png', 'donut.png', 'pizza.png', 'chips.png', 'icecream.png'];
+
+//     const isGood = Math.random() > 0.4; // 60% good, 40% junk
+//     const foodSrc = isGood 
+//         ? healthyFoods[Math.floor(Math.random() * healthyFoods.length)]
+//         : junkFoods[Math.floor(Math.random() * junkFoods.length)];
+
+//     createFallingFood(foodSrc, isGood, i);
+// }
+
+// // Start falling foods:
+// for (let i = 0; i < 10; i++) {
+//     setTimeout(() => createRandomFood(i), i * 1000);
+// }
+
+        function showHealthy() {
+    document.getElementById("food-info").innerHTML = `
+        <h2>Yay! You chose healthy food! 🥳</h2>
+        <p>Keep it up, you're becoming super strong!</p>
+        <img src="healthkid.png" style="width:150px; margin-top:10px;">
+    `;
+}
+
+function showUnhealthy() {
+    document.getElementById("food-info").innerHTML = `
+        <h2>Uh-oh! That's unhealthy! 😞</h2>
+        <p>Be careful with junk food, it's okay sometimes, but too much can hurt you!</p>
+        <img src="unhealthykid.png" style="width:150px; margin-top:10px;">
+    `;
+}
+        // // Function for healthy food click
+        // function showHealthy() {
+        //     document.getElementById("healthy-boy").style.display = "block";
+        //     document.getElementById("unhealthy-boy").style.display = "none";
+        //     document.getElementById("food-info").innerHTML = `
+        //         <h2>Yay! You chose healthy food! 🥳</h2>
+        //         <p>Keep it up, you're becoming super strong!</p>
+        //     `;
+        // }
+
+        // // Function for unhealthy food click
+        // function showUnhealthy() {
+        //     document.getElementById("unhealthy-boy").style.display = "block";
+        //     document.getElementById("healthy-boy").style.display = "none";
+        //     document.getElementById("food-info").innerHTML = `
+        //         <h2>Uh-oh! That's unhealthy! 😞</h2>
+        //         <p>Be careful with junk food, it's okay sometimes, but too much can hurt you!</p>
+        //     `;
+        // }
+
+        // Go back button
+        function goBack() {
+            window.location.href = "mainIndex.html";
+        }
+        
+    </script>
+
+</body>
+</html>

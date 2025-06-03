@@ -1,0 +1,191 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Good vs Bad Foods for Kids</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+</head>
+<body>
+    <nav>
+        <div class="logo">
+            <div class="good-side">
+              <div>🥦🍎</div>
+              <div class="label">Good Food</div>
+            </div>
+            <div class="bad-side">
+              <div>🍩🍔</div>
+              <div class="label">Bad Food</div>
+            </div>
+          </div>
+        <div style="display: flex; gap: 50px;">
+            <a href="mainIndex.html">🏠 Home</a>
+            <a href="index.html">📚 Learn</a>
+            <a href="game.html">🎮 Play Game</a>
+            <a href="monkey-teach.html">▶️ Video</a>
+            <a href="about.html">ℹ️ About Us</a>
+        </div>
+    </nav>
+    <header>
+        <div >
+            <img src="animal.png" id="monkey-guide" onclick="window.location.href='monkey-teach.html'" style="cursor:pointer; width:150px; text-align: left; margin-top: -20px; margin-right: -120px;" />
+          <img src="animal.png" id="monkey-guide" onclick="window.location.href='monkey-teach.html'" style="cursor:pointer; width:150px; text-align: right; margin-top: -20px; margin-left: -1400px" />
+        </div>
+        <section class="hero">
+            <h1>Learn Good & Bad Foods 🍎🍔</h1>
+            
+        </section>
+   
+        <p class="animal-talk" style="margin-right: 1200px;margin-top: -100px;">Click on a food 🐵 </p>
+      </header>
+      <div >
+        <script src="script.js"></script>
+        <div id="info-box" style="margin-left: 1100px; margin-top: -110px;"> </div>
+        
+    </div>
+      <section class="sections">
+ 
+        <div class="card">
+            <img src="apple1.png" onclick="showInfo('apple')">
+        </div>
+        <div class="card">
+            <img src="banana1.png" onclick="showInfo('banana')">
+        </div> 
+        <div class="card">
+            <img src="carrot1.png" onclick="showInfo('carrot')">
+        </div> 
+        <div class="card">
+            <img src="cherry.png" onclick="showInfo('cherry')">
+        </div> 
+        <div class="card">
+            <img src="dairy1.png" onclick="showInfo('milk')">
+        </div> 
+        <div class="card">
+            <img src="rice1.png" onclick="showInfo('rice')">
+        </div>
+        <div>
+            <div id="info-box"></div>
+            <script src="script.js"></script>
+        </div>
+        <div class="card">
+            <img src="burger1.png" onclick="showInfo('burger')">
+        </div>
+        <div class="card">
+            <img src="pizza1.png" onclick="showInfo('pizza')">
+        </div> 
+        <div class="card">
+            <img src="candy1.png" onclick="showInfo('candy')">
+        </div> 
+        <div class="card">
+            <img src="pineapple.png" onclick="showInfo('pineapple')">
+        </div> 
+        <div class="card">
+            <img src="pmg.png" onclick="showInfo('pomegranate')">
+        </div> 
+        <div class="card">
+            <img src="soda1.png" onclick="showInfo('soda')">
+        </div> 
+        <div class="card">
+            <img src="snack1.png" onclick="showInfo('chips')">
+        </div>
+       
+        
+       <div class="card">
+        <img src="grapes.png" onclick="showInfo('grapes')">
+    </div>
+    <div class="card">
+        <img src="icecream.png" onclick="showInfo('icecream')">
+    </div> 
+    <div class="card">
+        <img src="maggi.png" onclick="showInfo('maggi')">
+    </div> 
+    <div class="card">
+        <img src="mango.png" onclick="showInfo('mango')">
+    </div> 
+    <div class="card">
+        <img src="orange.png" onclick="showInfo('orange')">
+        </div>
+        <div class="card">
+            <img src="brinjal1.png" onclick="showInfo('brinjal')">
+        </div>
+        <div class="card">
+            <img src="cookies.png" onclick="showInfo('cookies')">
+        </div> 
+        <div class="card">
+            <img src="dotnet.png" onclick="showInfo('donuts')">
+       </div>
+     
+    <div class="card">
+        <img src="papaya.png" onclick="showInfo('papaya')">
+    </div> 
+    
+    <div class="card">
+        <img src="samosa.png" onclick="showInfo('samosa')">
+    </div> 
+    <div class="card">
+        <img src="watermelon.png" onclick="showInfo('watermelon')">
+    </div> 
+  
+    </section>
+    <!--<h2>Good Foods 🍎</h2>
+    <div class="container">
+<div class="good-container">
+        <div class="good-foods">
+            <div class="kid-image">
+                <h2 style="text-align: center;">Healthy Kid</h2>
+                <img src="healthkid.png" alt="Healthy Kid">
+            </div>
+            <a href="show-info.html?food=apple">
+                <img src="apple.jpg" style="cursor: pointer;">
+              </a>
+            <img src="apple.jpg" onclick="showInfo1('apple')">
+            <img src="banana.jpeg" onclick="showInfo('banana')">
+            <img src="carrot.png" onclick="showInfo('carrot')">
+            <img src="dairy.png" onclick="showInfo('milk')">
+            <img src="rice.jpeg" onclick="showInfo('rice')">
+        </div>
+    </div>
+    </div>
+    <h2>Bad Foods 🍔</h2>
+    <div class="container">
+    <div class="bad-container"></div>
+        <div class="bad-foods">
+            <div class="kid-image">
+                <h2>Unhealthy Kid</h2>
+                <img src="unhealthykid.png" alt="Unhealthy Kid">
+            </div>
+            <img src="burger.png" onclick="showInfo('burger')">
+            <img src="pizza.png" onclick="showInfo('pizza')">
+            <img src="candy.jpeg" onclick="showInfo('candy')">
+            <img src="soda.jpeg" onclick="showInfo('soda')">
+            <img src="snack.jpeg" onclick="showInfo('chips')">
+        </div>
+        </div>
+    </div>-->  
+    <a href="mainIndex.html" style="
+    display: inline-block;
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 30px;
+    border-radius: 30px;
+    font-size: 1.5em;
+    text-decoration: none;
+    font-family: 'Comic Sans MS', cursive;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s, transform 0.2s;
+">
+    🏡 Back to Home
+</a>
+
+    <div id="info-box"></div>
+    <script src="script.js"></script>
+    
+<footer>
+    <p>Made with ❤️ for kids' healthy learning </p>
+</footer>
+
+   </body>
+</html>
+

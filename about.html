@@ -1,0 +1,410 @@
+<!--<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthy vs Unhealthy Food for Kids - Home</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Comic Sans MS', cursive;
+            background: linear-gradient(135deg, #fff8e1, #ffccbc);
+        }
+
+        /* Navigation bar styling */
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            background-color: #ff6600;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav a {
+            text-decoration: none;
+            font-size: 1.5em;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        nav a:hover {
+            color: yellow;
+            transform: scale(1.2);
+        }
+
+        .welcome-container {
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        .welcome-container h1 {
+            font-size: 3em;
+            color: #ff4d4d;
+            animation: bounce 1.5s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-25px); }
+        }
+
+        .welcome-container p {
+            font-size: 1.4em;
+            color: #4CAF50;
+            margin-bottom: 30px;
+        }
+
+        video, img {
+            border-radius: 25px;
+            box-shadow: 0 0 25px rgba(255, 153, 0, 0.4);
+            width: 70%;
+            margin-top: 20px;
+        }
+
+        .buttons-container {
+            margin-top: 40px;
+        }
+
+        .home-button {
+            padding: 15px 35px;
+            font-size: 1.3em;
+            margin: 15px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .learn-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .learn-btn:hover {
+            background-color: #66bb6a;
+            transform: scale(1.1);
+        }
+
+        .game-btn {
+            background-color: #ff4d4d;
+            color: white;
+        }
+
+        .game-btn:hover {
+            background-color: #ff6666;
+            transform: scale(1.1);
+        }
+
+        .about-btn {
+            background-color: #ffa500;
+            color: white;
+        }
+
+        .about-btn:hover {
+            background-color: #ffb84d;
+            transform: scale(1.1);
+        }
+
+    </style>
+</head>
+<body>
+    <nav>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <img src="logo.png" alt="Logo" style="height: 60px; border-radius: 50%;">
+            <a href="index.html" style="font-size: 1.8em; color: white;">Healthy vs Unhealthy</a>
+        </div>
+        <div style="display: flex; gap: 40px; margin-left: auto; align-items: center;">
+            <a href="index.html">🏠 Home</a>
+            <a href="learn.html" style="color:#4CAF50;">🍎 Learn</a>
+            <a href="falling-food-game.html" style="color:#ff4d4d;">🎮 Play</a>
+            <a href="about.html" style="color:#ffa500;">ℹ️ About</a>
+        </div>
+    </nav>
+    <nav>
+        <a href="index.html">🏠 Home</a>
+        <a href="learn.html" style="color:#4CAF50;">🍎 Learn Good & Bad Foods</a>
+        <a href="falling-food-game.html" style="color:#ff4d4d;">🎮 Play Game</a>
+        <a href="about.html" style="color:#ffa500;">ℹ️ About</a>
+    </nav>
+
+    <div class="welcome-container">
+        <h1>🍎 Welcome Kids! 🍔</h1>
+        <p>Let's learn the difference between good (green) and bad (red) foods with fun games and videos! 🎉</p>
+        <video autoplay loop muted>
+            <source src="good-vs-bad-food.mp4" type="video/mp4">
+            <!-- You can also use a GIF here if you like! 
+        </video>
+
+        <div class="buttons-container">
+            <button class="home-button learn-btn" onclick="window.location.href='learn.html'">👉 Start Learning</button>
+            <button class="home-button game-btn" onclick="window.location.href='falling-food-game.html'">🎮 Play The Game</button>
+            <button class="home-button about-btn" onclick="window.location.href='about.html'">ℹ️ About</button>
+        </div>
+    </div>
+
+</body>
+</html>*/-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Good vs Bad Foods for Kids - Home</title>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Comic Neue', cursive;
+            background: linear-gradient(to bottom right, #c5f5c3, #f6d7d7); 
+        }
+        nav {
+            background: linear-gradient(to right, #8fdb8b, #52b56a); /* Green garden shades */
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 5px solid #ff4444; 
+            border-bottom: 5px solid #ff4444; /* fun red border for contrast */
+            box-shadow: 0 4px 8px rgba(28, 29, 28, 0.2);
+            padding: 5px 5px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        nav img {
+            height: 60px;
+            border-radius: 50%;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 23px;
+            transition: all 0.3s;
+            
+        }
+        nav a:hover {
+            color:#ff4444;
+            transform: scale(1.2);
+        }
+        p {
+            font-size: 1.4em;
+            color: #444;
+            margin-bottom: 20px;
+        }
+
+        .back-btn {
+            background-color: #ff5722;
+            color: #fff;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 15px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .back-btn:hover {
+            background-color: #e64a19;
+        }
+        h1 {
+            font-size: 3em;
+            color: #ff5722;
+            margin-bottom: 20px;
+        }
+
+       
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        .hero {
+            text-align: center;
+            padding: 10px 10px;
+            background: url('kids-bg.png') no-repeat center bottom / cover;
+            color: #ff4444;
+        }
+        .hero h1 {
+            font-size: 2em;
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 200%, 50%, 80%, 100% { transform: translateY(0);}
+            40% { transform: translateY(-30px);}
+            60% { transform: translateY(-15px);}
+        }
+        .hero p {
+            font-size: 1.5em;
+            color: #04be33;
+        }
+        .hero p:hover{
+            font-size: 2em;
+            color: #0f441c;
+        }
+        .sections {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 50px 0;
+            gap: 25px;
+        }
+        .card {
+            width: 300px;
+            height: 300px;
+            background: #f1bbbb;
+            border-radius: 30px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        .card:hover {
+            transform: scale(1.05);
+        }
+        .card img {
+            border-radius: 30px;
+            width: 80%;
+            height: 40%;
+            margin: 5px 0px;
+        }
+        .card h3 {
+            color: #04be33;
+        }
+        .card p {
+            color: #474444;
+        }
+        .card a {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 16px;
+            background: #4CAF50;
+            color: white;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+        .card a:hover {
+            background: white;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            color: #439d48;
+
+        }
+        footer {
+            background: linear-gradient(to right, #8fdb8b, #52b56a); /* Green garden shades */
+            border-top: 5px solid #ff4444; 
+            border-bottom: 5px solid #ff4444; /* fun red border for contrast */
+            text-align: center;
+            color: white;
+            padding: 10px;
+            font-family: 23px;
+        }
+        .logo {
+      display: flex;
+      width: 120px;
+      height: 90px;
+      border-radius: 0px;
+      overflow: hidden;
+      box-shadow: 2px 2px 15px rgb(249, 247, 247);
+      cursor: pointer;
+    }
+    .logo:hover{
+        box-shadow: 2px 2px 15px rgb(0, 0, 0);
+    }
+    .good-side, .bad-side {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      transition: transform 0.3s;
+    }
+    .good-side {
+      background: linear-gradient(135deg, #8fdb8b, #52b56a);
+      color: white;
+    }
+    .bad-side {
+      background: linear-gradient(135deg, #f77b7b, #d94545);
+      color: white;
+    }
+    .logo:hover .good-side {
+      transform: scale(1.1) rotate(-5deg);
+    }
+    .logo:hover .bad-side {
+      transform: scale(1.1) rotate(5deg);
+    }
+    .label {
+      font-size: 12px;
+      margin-top: 17px;
+      font-weight: bold;
+    }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="logo">
+        <div class="good-side">
+          <div>🥦🍎</div>
+          <div class="label">Good Food</div>
+        </div>
+        <div class="bad-side">
+          <div>🍩🍔</div>
+          <div class="label">Bad Food</div>
+        </div>
+      </div>
+    <div style="display: flex; gap: 50px;">
+        <a href="mainIndex.html">🏠 Home</a>
+        <a href="index.html">📚 Learn</a>
+        <a href="game.html">🎮 Play Game</a>
+        <a href="monkey-teach.html">▶️ Video</a>
+        <a href="about.html">ℹ️ About Us</a>
+    </div>
+</nav>
+
+<div class="about-section">
+    <h1 class="hero" style="font-size: 2em;">About</h1>
+    <div style="
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        flex-wrap: wrap; 
+        gap: 30px;
+    ">
+        <img src="kid3.jpg" alt="Healthy Kid Mascot" style="
+            width: 350px; 
+            border-radius: 20px; 
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        ">
+        <div style="max-width: 500px; text-align: left;">
+            <p>Welcome to <strong>Good vs Bad Foods for Kids!</strong> — a fun and interactive website where kids can learn about healthy foods 🍎 and unhealthy foods 🍔 in a playful and exciting way.</p>
+            <p>Click on foods to learn facts, watch fun cartoon videos, and play games to help you make smart food choices. Our goal is to help kids stay happy, healthy, and strong! 💪🐵</p>
+            <p>Join our monkey guide 🐒 and learn how to become a superhero of healthy eating! 🌈✨</p>
+            <a href="mainIndex.html" style="
+                display: inline-block;
+                background-color: #4CAF50;
+                color: white;
+                padding: 12px 30px;
+                border-radius: 30px;
+                font-size: 1.5em;
+                text-decoration: none;
+                font-family: 'Comic Sans MS', cursive;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+                transition: background-color 0.3s, transform 0.2s;
+                margin-top: 20px;
+            ">🏡 Back to Home</a>
+        </div>
+    </div>
+</div>
+
+
+
+<footer>
+    <p>Made with ❤️ for kids' healthy learning </p>
+</footer>
+
+</body>
+</html>
+

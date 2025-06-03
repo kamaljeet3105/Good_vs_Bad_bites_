@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Royale: Last Bite Standing</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Bangers', cursive;
+            background: linear-gradient(to bottom, #87CEEB, #E0F7FA);
+            touch-action: manipulation;
+        }
+        
+        #game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background-image: url('https://img.freepik.com/free-vector/hand-drawn-kitchen-background_23-2149070396.jpg');
+            background-size: cover;
+        }
+        
+        #player {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            font-size: 2.5rem;
+            text-align: center;
+            transition: transform 0.1s;
+            filter: drop-shadow(2px 4px 4px rgba(0,0,0,0.3));
+            z-index: 10;
+        }
+        
+        .food-enemy {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            font-size: 2rem;
+            text-align: center;
+            z-index: 5;
+            transition: transform 0.2s;
+        }
+        
+        .healthy { color: #4CAF50; }
+        .unhealthy { color: #FF5252; }
+        
+        #map {
+            position: absolute;
+            width: 2000px;
+            height: 2000px;
+            background-color: rgba(255,255,255,0.3);
+            border: 4px dashed #333;
+            transform-origin: 0 0;
+        }
+        
+        #mini-map {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 150px;
+            height: 150px;
+            background-color: rgba(0,0,0,0.5);
+            border: 2px solid #333;
+            z-index: 100;
+        }
+        
+        #health-bar {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 200px;
+            height: 30px;
+            background-color: rgba(0,0,0,0.5);
+            border: 2px solid #333;
+            z-index: 100;
+        }
+        
+        #health-fill {
+            height: 100%;
+            width: 100%;
+            background-color: #4CAF50;
+            transition: width 0.3s;
+        }
+        
+        #weapon-display {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background-color: rgba(0,0,0,0.5);
+            color: white;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            z-index: 100;
+        }
+        
+        .bullet {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #FFD700;
+            border-radius: 50%;
+            z-index: 2;
+        }
+        
+        #safe-zone {
+            position: absolute;
+            border: 3px dashed #4CAF50;
+            border-radius: 50%;
+            z-index: 1;
+        }
+        
+        #danger-zone {
+            position: absolute;
+            background-color: rgba(255,82,82,0.2);
+            border: 3px dashed #FF5252;
+            border-radius: 50%;
+            z-index: 1;
+        }
+        
+        .loot-item {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            font-size: 1.5rem;
+            text-align: center;
+            z-index: 4;
+            animation: float 2s infinite ease-in-out;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        #game-over {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 3rem;
+            z-index: 200;
+            display: none;
+        }
+        
+        #restart-btn {
+            margin-top: 20px;
+            padding: 15px 30px;
+            font-size: 1.5rem;
+            background-color: #FFD700;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Bangers', cursive;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="game-container">
+        <div id="map"></div>
+        <div id="player">🍔</div>
+        <div id="safe-zone"></div>
+        <div id="danger-zone"></div>
+        
+        <div id="health-bar">
+            <div id="health-fill"></div>
+        </div>
+        
+        <div id="weapon-display">
+            Weapon: <span id="current-weapon">Burger Blaster</span><br>
+            Ammo: <span id="ammo-count">∞</span>
+        </div>
+        
+        <div id="mini-map"></div>
+        
+        <div id="game-over">
+            <div id="result-message">You Were Eliminated!</div>
+            <div id="placement">#24/100</div>
+            <button id="restart-btn">Play Again</button>
+        </div>
+    </div>
+
+    <audio id="shoot-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-short-laser-gun-shot-1670.mp3"></audio>
+    <audio id="hit-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-explosion-2759.mp3"></audio>
+    <audio id="loot-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3"></audio>
+    <audio id="zone-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-sci-fi-alarm-905.mp3"></audio>
+
+    <script>
+        // Game variables
+        const player = {
+            x: 1000,
+            y: 1000,
+            health: 100,
+            speed: 5,
+            team: Math.random() > 0.5 ? 'healthy' : 'unhealthy',
+            weapons: [
+                { name: "Burger Blaster", damage: 10, ammo: Infinity, emoji: "🍔" },
+                { name: "Carrot Carbine", damage: 15, ammo: 30, emoji: "🥕" },
+                { name: "Soda Shotgun", damage: 25, ammo: 8, emoji: "🥤" }
+            ],
+            currentWeapon: 0,
+            kills: 0
+        };
+        
+        let enemies = [];
+        let bullets = [];
+        let loot = [];
+        let safeZone = { x: 1000, y: 1000, radius: 800 };
+        let dangerZone = { x: 1000, y: 1000, radius: 1200 };
+        let gameTime = 0;
+        let gameOver = false;
+        let playersRemaining = 100;
+        
+        // DOM elements
+        const playerElement = document.getElementById('player');
+        const gameContainer = document.getElementById('game-container');
+        const mapElement = document.getElementById('map');
+        const miniMap = document.getElementById('mini-map');
+        const healthFill = document.getElementById('health-fill');
+        const weaponDisplay = document.getElementById('current-weapon');
+        const ammoDisplay = document.getElementById('ammo-count');
+        const gameOverScreen = document.getElementById('game-over');
+        const resultMessage = document.getElementById('result-message');
+        const placementText = document.getElementById('placement');
+        const shootSound = document.getElementById('shoot-sound');
+        const hitSound = document.getElementById('hit-sound');
+        const lootSound = document.getElementById('loot-sound');
+        const zoneSound = document.getElementById('zone-sound');
+        
+        // Initialize game
+        function initGame() {
+            // Set player appearance based on team
+            playerElement.textContent = player.team === 'healthy' ? '🥦' : '🍔';
+            playerElement.className = player.team;
+            
+            // Create enemies
+            for (let i = 0; i < 99; i++) {
+                const team = Math.random() > 0.5 ? 'healthy' : 'unhealthy';
+                enemies.push({
+                    x: Math.random() * 1800 + 100,
+                    y: Math.random() * 1800 + 100,
+                    health: 100,
+                    team,
+                    emoji: team === 'healthy' ? 
+                        ['🥦','🍎','🥕','🍓','🌽'][Math.floor(Math.random() * 5)] : 
+                        ['🍔','🍟','🍕','🍩','🥤'][Math.floor(Math.random() * 5)],
+                    speed: 2 + Math.random() * 3,
+                    aiState: 'wander',
+                    targetX: 0,
+                    targetY: 0
+                });
+            }
+            
+            // Create loot
+            for (let i = 0; i < 50; i++) {
+                loot.push({
+                    x: Math.random() * 1800 + 100,
+                    y: Math.random() * 1800 + 100,
+                    type: ['health','ammo','weapon'][Math.floor(Math.random() * 3)],
+                    amount: Math.floor(Math.random() * 3) + 1,
+                    emoji: ['❤️','🔫','🎁'][Math.floor(Math.random() * 3)]
+                });
+            }
+            
+            // Start game loop
+            gameLoop();
+            setInterval(updateZones, 30000);
+            setInterval(updateAI, 1000);
+        }
+        
+        // Main game loop
+        function gameLoop() {
+            if (gameOver) return;
+            
+            // Update game time
+            gameTime++;
+            
+            // Move enemies
+            moveEnemies();
+            
+            // Move bullets
+            moveBullets();
+            
+            // Check collisions
+            checkCollisions();
+            
+            // Update display
+            updateDisplay();
+            
+            // Continue loop
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // Move enemies with simple AI
+        function moveEnemies() {
+            enemies.forEach(enemy => {
+                if (enemy.aiState === 'wander') {
+                    // Move randomly
+                    enemy.x += (Math.random() - 0.5) * enemy.speed;
+                    enemy.y += (Math.random() - 0.5) * enemy.speed;
+                    
+                    // Occasionally change to flee or attack state
+                    if (Math.random() > 0.98) {
+                        enemy.aiState = Math.random() > 0.7 ? 'flee' : 'attack';
+                        enemy.targetX = Math.random() * 1800 + 100;
+                        enemy.targetY = Math.random() * 1800 + 100;
+                    }
+                } 
+                else if (enemy.aiState === 'flee') {
+                    // Move away from danger zone
+                    const angle = Math.atan2(enemy.y - dangerZone.y, enemy.x - dangerZone.x);
+                    enemy.x += Math.cos(angle) * enemy.speed;
+                    enemy.y += Math.sin(angle) * enemy.speed;
+                    
+                    if (Math.random() > 0.95) enemy.aiState = 'wander';
+                }
+                else if (enemy.aiState === 'attack') {
+                    // Move toward target
+                    const angle = Math.atan2(enemy.targetY - enemy.y, enemy.targetX - enemy.x);
+                    enemy.x += Math.cos(angle) * enemy.speed;
+                    enemy.y += Math.sin(angle) * enemy.speed;
+                    
+                    if (Math.random() > 0.95 || 
+                        (Math.abs(enemy.x - enemy.targetX) < 50 && Math.abs(enemy.y - enemy.targetY) < 50)) {
+                        enemy.aiState = 'wander';
+                    }
+                }
+                
+                // Keep enemies in bounds
+                enemy.x = Math.max(50, Math.min(enemy.x, 1950));
+                enemy.y = Math.max(50, Math.min(enemy.y, 1950));
+            });
+        }
+        
+        // Move bullets
+        function moveBullets() {
+            bullets.forEach(bullet => {
+                bullet.x += Math.cos(bullet.angle) * bullet.speed;
+                bullet.y += Math.sin(bullet.angle) * bullet.speed;
+                bullet.lifetime--;
+                
+                // Remove bullets that are too old or out of bounds
+                if (bullet.lifetime <= 0 || 
+                    bullet.x < 0 || bullet.x > 2000 || 
+                    bullet.y < 0 || bullet.y > 2000) {
+                    const index = bullets.indexOf(bullet);
+                    if (index > -1) bullets.splice(index, 1);
+                }
+            });
+        }
+        
+        // Check collisions
+        function checkCollisions() {
+            // Bullet vs enemy
+            bullets.forEach(bullet => {
+                enemies.forEach(enemy => {
+                    if (!enemy.dead && 
+                        Math.sqrt((bullet.x - enemy.x) ** 2 + (bullet.y - enemy.y) ** 2) < 30) {
+                        enemy.health -= bullet.damage;
+                        hitSound.currentTime = 0;
+                        hitSound.play();
+                        
+                        // Remove bullet
+                        const bulletIndex = bullets.indexOf(bullet);
+                        if (bulletIndex > -1) bullets.splice(bulletIndex, 1);
+                        
+                        // Check if enemy died
+                        if (enemy.health <= 0) {
+                            enemy.dead = true;
+                            playersRemaining--;
+                            
+                            // Drop loot
+                            if (Math.random() > 0.7) {
+                                loot.push({
+                                    x: enemy.x,
+                                    y: enemy.y,
+                                    type: ['health','ammo'][Math.floor(Math.random() * 2)],
+                                    amount: 1,
+                                    emoji: ['❤️','🔫'][Math.floor(Math.random() * 2)]
+                                });
+                            }
+                            
+                            // Update player kills if this was player's bullet
+                            if (bullet.fromPlayer) {
+                                player.kills++;
+                            }
+                        }
+                    }
+                });
+            });
+            
+            // Player vs loot
+            loot.forEach((item, index) => {
+                if (Math.sqrt((player.x - item.x) ** 2 + (player.y - item.y) ** 2) < 50) {
+                    lootSound.currentTime = 0;
+                    lootSound.play();
+                    
+                    if (item.type === 'health') {
+                        player.health = Math.min(100, player.health + (25 * item.amount));
+                        healthFill.style.width = `${player.health}%`;
+                    } 
+                    else if (item.type === 'ammo') {
+                        player.weapons[player.currentWeapon].ammo += 10 * item.amount;
+                        updateWeaponDisplay();
+                    }
+                    else if (item.type === 'weapon') {
+                        // Add a random weapon
+                        const newWeapons = [
+                            { name: "Pizza Pistol", damage: 12, ammo: 15, emoji: "🍕" },
+                            { name: "Donut Dynamite", damage: 40, ammo: 3, emoji: "🍩" },
+                            { name: "Broccoli Bazooka", damage: 30, ammo: 5, emoji: "🥦" }
+                        ];
+                        player.weapons.push(newWeapons[Math.floor(Math.random() * 3)]);
+                    }
+                    
+                    loot.splice(index, 1);
+                }
+            });
+            
+            // Check if player is in danger zone
+            const distToCenter = Math.sqrt((player.x - safeZone.x) ** 2 + (player.y - safeZone.y) ** 2);
+            if (distToCenter > dangerZone.radius) {
+                player.health -= 0.5;
+                healthFill.style.width = `${player.health}%`;
+                
+                if (player.health <= 0) {
+                    endGame(false);
+                }
+            }
+            
+            // Check win condition
+            if (playersRemaining <= 1 && !enemies.some(e => !e.dead)) {
+                endGame(true);
+            }
+        }
+        
+        // Update display
+        function updateDisplay() {
+            // Update player position
+            const scale = Math.min(
+                gameContainer.clientWidth / 2000, 
+                gameContainer.clientHeight / 2000
+            );
+            
+            mapElement.style.transform = `translate(${-player.x * scale + gameContainer.clientWidth / 2}px, ${-player.y * scale + gameContainer.clientHeight / 2}px) scale(${scale})`;
+            
+            // Update safe/danger zones
+            const safeZoneElement = document.getElementById('safe-zone');
+            safeZoneElement.style.width = `${safeZone.radius * 2 * scale}px`;
+            safeZoneElement.style.height = `${safeZone.radius * 2 * scale}px`;
+            safeZoneElement.style.left = `${safeZone.x * scale - safeZone.radius * scale + gameContainer.clientWidth / 2}px`;
+            safeZoneElement.style.top = `${safeZone.y * scale - safeZone.radius * scale + gameContainer.clientHeight / 2}px`;
+            
+            const dangerZoneElement = document.getElementById('danger-zone');
+            dangerZoneElement.style.width = `${dangerZone.radius * 2 * scale}px`;
+            dangerZoneElement.style.height = `${dangerZone.radius * 2 * scale}px`;
+            dangerZoneElement.style.left = `${dangerZone.x * scale - dangerZone.radius * scale + gameContainer.clientWidth / 2}px`;
+            dangerZoneElement.style.top = `${dangerZone.y * scale - dangerZone.radius * scale + gameContainer.clientHeight / 2}px`;
+            
+            // Clear and redraw enemies
+            document.querySelectorAll('.food-enemy').forEach(e => e.remove());
+            enemies.forEach(enemy => {
+                if (!enemy.dead) {
+                    const enemyElement = document.createElement('div');
+                    enemyElement.className = `food-enemy ${enemy.team}`;
+                    enemyElement.textContent = enemy.emoji;
+                    enemyElement.style.left = `${enemy.x * scale - 25}px`;
+                    enemyElement.style.top = `${enemy.y * scale - 25}px`;
+                    gameContainer.appendChild(enemyElement);
+                }
+            });
+            
+            // Clear and redraw bullets
+            document.querySelectorAll('.bullet').forEach(b => b.remove());
+            bullets.forEach(bullet => {
+                const bulletElement = document.createElement('div');
+                bulletElement.className = 'bullet';
+                bulletElement.style.left = `${bullet.x * scale - 5}px`;
+                bulletElement.style.top = `${bullet.y * scale - 5}px`;
+                gameContainer.appendChild(bulletElement);
+            });
+            
+            // Clear and redraw loot
+            document.querySelectorAll('.loot-item').forEach(l => l.remove());
+            loot.forEach(item => {
+                const lootElement = document.createElement('div');
+                lootElement.className = 'loot-item';
+                lootElement.textContent = item.emoji;
+                lootElement.style.left = `${item.x * scale - 15}px`;
+                lootElement.style.top = `${item.y * scale - 15}px`;
+                gameContainer.appendChild(lootElement);
+            });
+            
+            // Update mini-map
+            miniMap.innerHTML = '';
+            const miniMapScale = 150 / 2000;
+            
+            // Draw safe zone
+            const miniSafeZone = document.createElement('div');
+            miniSafeZone.style.position = 'absolute';
+            miniSafeZone.style.border = '2px solid #4CAF50';
+            miniSafeZone.style.borderRadius = '50%';
+            miniSafeZone.style.width = `${safeZone.radius * 2 * miniMapScale}px`;
+            miniSafeZone.style.height = `${safeZone.radius * 2 * miniMapScale}px`;
+            miniSafeZone.style.left = `${safeZone.x * miniMapScale - safeZone.radius * miniMapScale}px`;
+            miniSafeZone.style.top = `${safeZone.y * miniMapScale - safeZone.radius * miniMapScale}px`;
+            miniMap.appendChild(miniSafeZone);
+            
+            // Draw danger zone
+            const miniDangerZone = document.createElement('div');
+            miniDangerZone.style.position = 'absolute';
+            miniDangerZone.style.border = '2px solid #FF5252';
+            miniDangerZone.style.borderRadius = '50%';
+            miniDangerZone.style.width = `${dangerZone.radius * 2 * miniMapScale}px`;
+            miniDangerZone.style.height = `${dangerZone.radius * 2 * miniMapScale}px`;
+            miniDangerZone.style.left = `${dangerZone.x * miniMapScale - dangerZone.radius * miniMapScale}px`;
+            miniDangerZone.style.top = `${dangerZone.y * miniMapScale - dangerZone.radius * miniMapScale}px`;
+            miniMap.appendChild(miniDangerZone);
+            
+            // Draw player
+            const miniPlayer = document.createElement('div');
+            miniPlayer.style.position = 'absolute';
+            miniPlayer.style.width = '10px';
+            miniPlayer.style.height = '10px';
+            miniPlayer.style.backgroundColor = player.team === 'healthy' ? '#4CAF50' : '#FF5252';
+            miniPlayer.style.borderRadius = '50%';
+            miniPlayer.style.left = `${player.x * miniMapScale - 5}px`;
+            miniPlayer.style.top = `${player.y * miniMapScale - 5}px`;
+            miniMap.appendChild(miniPlayer);
+            
+            // Draw enemies
+            enemies.forEach(enemy => {
+                if (!enemy.dead) {
+                    const miniEnemy = document.createElement('div');
+                    miniEnemy.style.position = 'absolute';
+                    miniEnemy.style.width = '6px';
+                    miniEnemy.style.height = '6px';
+                    miniEnemy.style.backgroundColor = enemy.team === 'healthy' ? '#4CAF50' : '#FF5252';
+                    miniEnemy.style.borderRadius = '50%';
+                    miniEnemy.style.left = `${enemy.x * miniMapScale - 3}px`;
+                    miniEnemy.style.top = `${enemy.y * miniMapScale - 3}px`;
+                    miniMap.appendChild(miniEnemy);
+                }
+            });
+        }
+        
+        // Update shrinking zones
+        function updateZones() {
+            zoneSound.currentTime = 0;
+            zoneSound.play();
+            
+            // Move safe zone center randomly
+            safeZone.x = Math.max(400, Math.min(1600, safeZone.x + (Math.random() - 0.5) * 400));
+            safeZone.y = Math.max(400, Math.min(1600, safeZone.y + (Math.random() - 0.5) * 400));
+            
+            // Shrink zones
+            safeZone.radius *= 0.7;
+            dangerZone.radius *= 0.7;
+            
+            // Ensure danger zone is always larger
+            dangerZone.x = safeZone.x;
+            dangerZone.y = safeZone.y;
+            dangerZone.radius = safeZone.radius * 1.5;
+        }
+        
+        // Update enemy AI
+        function updateAI() {
+            enemies.forEach(enemy => {
+                if (!enemy.dead) {
+                    // Simple AI: move toward safe zone if outside danger zone
+                    const distToSafe = Math.sqrt((enemy.x - safeZone.x) ** 2 + (enemy.y - safeZone.y) ** 2);
+                    const distToDanger = Math.sqrt((enemy.x - dangerZone.x) ** 2 + (enemy.y - dangerZone.y) ** 2);
+                    
+                    if (distToDanger > dangerZone.radius) {
+                        // Move toward safe zone
+                        const angle = Math.atan2(safeZone.y - enemy.y, safeZone.x - enemy.x);
+                        enemy.x += Math.cos(angle) * enemy.speed;
+                        enemy.y += Math.sin(angle) * enemy.speed;
+                    } else if (Math.random() > 0.9) {
+                        // Occasionally shoot toward player
+                        const angle = Math.atan2(player.y - enemy.y, player.x - enemy.x);
+                        bullets.push({
+                            x: enemy.x,
+                            y: enemy.y,
+                            angle,
+                            speed: 7,
+                            damage: 10,
+                            lifetime: 100,
+                            fromPlayer: false
+                        });
+                    }
+                }
+            });
+        }
+        
+        // Handle keyboard input
+        const keys = {};
+        document.addEventListener('keydown', e => keys[e.key] = true);
+        document.addEventListener('keyup', e => keys[e.key] = false);
+        
+        // Movement update
+        setInterval(() => {
+            if (gameOver) return;
+            
+            let moveX = 0, moveY = 0;
+            
+            if (keys['ArrowUp'] || keys['w']) moveY -= player.speed;
+            if (keys['ArrowDown'] || keys['s']) moveY += player.speed;
+            if (keys['ArrowLeft'] || keys['a']) moveX -= player.speed;
+            if (keys['ArrowRight'] || keys['d']) moveX += player.speed;
+            
+            // Normalize diagonal movement
+            if (moveX !== 0 && moveY !== 0) {
+                moveX *= 0.7071;
+                moveY *= 0.7071;
+            }
+            
+            player.x = Math.max(50, Math.min(player.x + moveX, 1950));
+            player.y = Math.max(50, Math.min(player.y + moveY, 1950));
+        }, 16);
+        
+        // Shooting
+        document.addEventListener('click', (e) => {
+            if (gameOver) return;
+            
+            const weapon = player.weapons[player.currentWeapon];
+            if (weapon.ammo <= 0 && weapon.ammo !== Infinity) return;
+            
+            // Calculate angle to mouse
+            const rect = gameContainer.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+            
+            const scale = Math.min(
+                gameContainer.clientWidth / 2000, 
+                gameContainer.clientHeight / 2000
+            );
+            
+            const worldX = (mouseX - gameContainer.clientWidth / 2) / scale + player.x;
+            const worldY = (mouseY - gameContainer.clientHeight / 2) / scale + player.y;
+            
+            const angle = Math.atan2(worldY - player.y, worldX - player.x);
+            
+            // Shoot bullet
+            bullets.push({
+                x: player.x,
+                y: player.y,
+                angle,
+                speed: 10,
+                damage: weapon.damage,
+                lifetime: 100,
+                fromPlayer: true
+            });
+            
+            // Play sound and reduce ammo
+            shootSound.currentTime = 0;
+            shootSound.play();
+            
+            if (weapon.ammo !== Infinity) {
+                weapon.ammo--;
+                updateWeaponDisplay();
+            }
+        });
+        
+        // Weapon switching
+        document.addEventListener('keydown', (e) => {
+            if (e.key >= '1' && e.key <= '3' && player.weapons[e.key - 1]) {
+                player.currentWeapon = e.key - 1;
+                updateWeaponDisplay();
+            }
+        });
+        
+        // Update weapon display
+        function updateWeaponDisplay() {
+            const weapon = player.weapons[player.currentWeapon];
+            weaponDisplay.textContent = `${weapon.emoji} ${weapon.name}`;
+            ammoDisplay.textContent = weapon.ammo === Infinity ? '∞' : weapon.ammo;
+        }
+        
+        // End game
+        function endGame(win) {
+            gameOver = true;
+            gameOverScreen.style.display = 'flex';
+            
+            if (win) {
+                resultMessage.textContent = 'VICTORY ROYALE! 🏆';
+                resultMessage.style.color = '#FFD700';
+                placementText.textContent = `Kills: ${player.kills} | #1/${playersRemaining + 1}`;
+            } else {
+                resultMessage.textContent = 'DEFEAT! 💀';
+                resultMessage.style.color = '#FF5252';
+                placementText.textContent = `Kills: ${player.kills} | #${playersRemaining + 1}/${playersRemaining + 1}`;
+            }
+        }
+        
+        // Restart game
+        document.getElementById('restart-btn').addEventListener('click', () => {
+            location.reload();
+        });
+        
+        // Start the game
+        initGame();
+    </script>
+</body>
+</html>
